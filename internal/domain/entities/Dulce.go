@@ -17,7 +17,7 @@ type Dulce struct {
 	FechaVencimiento time.Time
 	FechaExpedicion  time.Time
 	Disponibles      int
-	codigo           string
+	Codigo           string
 }
 
 
