@@ -1,6 +1,6 @@
 package mocks
 
-//dado unos parametros devuelve la respuesta deseada para comprobar que el caso de uso reaccione bien nate las diferentes situaciones 
+// dado unos parametros devuelve la respuesta deseada para comprobar que el caso de uso reaccione bien nate las diferentes situaciones
 
 import (
 	"Mileyman-API/internal/domain/entities"
@@ -9,7 +9,7 @@ import (
 )
 
 type MockDulceProvider struct {
-	mock.Mock //implementacion boba de la interface
+	mock.Mock // implementacion boba de la interface
 }
 
 func (mock *MockDulceProvider) GetByCode(codigo string) (entities.Dulce, error) {

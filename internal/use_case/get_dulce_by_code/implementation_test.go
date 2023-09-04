@@ -1,9 +1,10 @@
 package getdulcebycode
 
 import (
+	"testing"
+
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/repositories/mocks"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,10 +27,9 @@ func TestWhenSuccesfullReturnDulce(t *testing.T) {
 	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(expectedDulce, nil)
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
-	assert.NoError( t, err )
+	assert.NoError(t, err)
 	assert.Equal(t, expectedDulce, dulce)
-	mockDulceProvider.AssertNumberOfCalls( t, "GetByCode", 1)
-
+	mockDulceProvider.AssertNumberOfCalls(t, "GetByCode", 1)
 }
 
 func TestWhenDulceNotFoundReturnNotFoundError(t *testing.T) {
@@ -38,10 +38,9 @@ func TestWhenDulceNotFoundReturnNotFoundError(t *testing.T) {
 	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(expectedDulce, nil)
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
-	assert.NoError( t, err )
+	assert.NoError(t, err)
 	assert.Equal(t, expectedDulce, dulce)
-	mockDulceProvider.AssertNumberOfCalls( t, "GetByCode", 1)
-
+	mockDulceProvider.AssertNumberOfCalls(t, "GetByCode", 1)
 }
 
 func GetDulce() (dulce entities.Dulce) {

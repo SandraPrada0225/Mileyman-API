@@ -16,9 +16,9 @@ type Router interface {
 }
 
 type router struct {
-	eng *gin.Engine      //crea
-	rg  *gin.RouterGroup //exponer los handlers en la url//guarda
-	db  *gorm.DB         //inyectar la base de datos
+	eng *gin.Engine      // crea
+	rg  *gin.RouterGroup // exponer los handlers en la url//guarda
+	db  *gorm.DB         // inyectar la base de datos
 }
 
 func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
@@ -31,24 +31,23 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	//providers
+	// providers
 	dulceProvider := dulces.Repository{
 		DB: r.db,
 	}
 
-	//UseCase
+	// UseCase
 	getDulceByCodeUseCase := getdulcebycode.Implementation{
 		DulcesProvider: dulceProvider,
 	}
 
-	//Handlers
+	// Handlers
 	getDulceByCodeHandler := handlers.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
 	}
 
-	//endPoint
+	// endPoint
 	p := r.rg.Group("/dulces")
 
 	p.GET("/:codigo", getDulceByCodeHandler.Handle())
-
 }

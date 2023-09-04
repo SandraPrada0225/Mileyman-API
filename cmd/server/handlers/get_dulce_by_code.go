@@ -1,10 +1,12 @@
 package handlers
+
 // es un camarero
 
 import (
+	"net/http"
+
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +23,6 @@ func (handler GetDulceByCode) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		codigo := c.Param("codigo")
 		dulce, err := handler.UseCase.Execute(codigo)
-
 		if err != nil {
 			switch err.(type) {
 			case database.NotFoundError:
@@ -32,6 +33,5 @@ func (handler GetDulceByCode) Handle() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, dulce)
-
 	}
 }

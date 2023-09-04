@@ -1,14 +1,14 @@
-package database;
+package database
 
-type NotFoundError struct{
-	mensaje  string 
+type NotFoundError struct {
+	mensaje string
 }
 
-func (e NotFoundError) Error()string{
+func (e NotFoundError) Error() string {
 	return e.mensaje
 }
 
-func NewNotFoundError (mensaje string) error{
+func NewNotFoundError(mensaje string) error {
 	return NotFoundError{
 		mensaje: mensaje,
 	}

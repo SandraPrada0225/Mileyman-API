@@ -1,9 +1,6 @@
 package handlers
 
 import (
-	"Mileyman-API/internal/domain/entities"
-	"Mileyman-API/internal/domain/errors/database"
-	"Mileyman-API/internal/use_case/get_dulce_by_code/mocks"
 	"bytes"
 	"encoding/json"
 	"io"
@@ -11,13 +8,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"Mileyman-API/internal/domain/entities"
+	"Mileyman-API/internal/domain/errors/database"
+	"Mileyman-API/internal/use_case/get_dulce_by_code/mocks"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	mockGetDulceByCode *mocks.MockGetDulceByCode
-)
+var mockGetDulceByCode *mocks.MockGetDulceByCode
 
 func CreateServer() *gin.Engine {
 	gin.SetMode(gin.TestMode)
@@ -52,17 +51,17 @@ func TestOk(t *testing.T) {
 	request := httptest.NewRequest("GET", "/api/dulces/2Mile", bytes.NewBuffer([]byte("")))
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
-	
+
 	r.ServeHTTP(response, request)
 
-	bodyResponse, err := io.ReadAll(response.Body) 
+	bodyResponse, err := io.ReadAll(response.Body)
 
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Equal(t, string(dulcejson), string(bodyResponse))
 	mockGetDulceByCode.AssertNumberOfCalls(t, "Execute", 1)
-
 }
+
 func TestWhenNotFoundShouldReturn404(t *testing.T) {
 	r := CreateServer()
 
@@ -70,7 +69,7 @@ func TestWhenNotFoundShouldReturn404(t *testing.T) {
 	request := httptest.NewRequest("GET", "/api/dulces/2Mile", bytes.NewBuffer([]byte("")))
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
-	
+
 	r.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusNotFound, response.Code)
@@ -84,10 +83,9 @@ func TestWhenInternalServerErrorShouldReturn500(t *testing.T) {
 	request := httptest.NewRequest("GET", "/api/dulces/2Mile", bytes.NewBuffer([]byte("")))
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
-	
+
 	r.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusInternalServerError, response.Code)
 	mockGetDulceByCode.AssertNumberOfCalls(t, "Execute", 1)
 }
-

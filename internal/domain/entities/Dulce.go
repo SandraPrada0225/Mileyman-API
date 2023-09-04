@@ -19,5 +19,3 @@ type Dulce struct {
 	Disponibles      int
 	Codigo           string
 }
-
-

@@ -1,10 +1,11 @@
 package dulces
 
 import (
-	dbmocks "Mileyman-API/internal/app/config/database/mocks"
-	"Mileyman-API/internal/domain/entities"
 	"reflect"
 	"testing"
+
+	dbmocks "Mileyman-API/internal/app/config/database/mocks"
+	"Mileyman-API/internal/domain/entities"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"gorm.io/gorm"
@@ -48,8 +49,7 @@ func TestByCodeErrorNotFound(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
-	assert.Empty(t,dulceRecibido)
-
+	assert.Empty(t, dulceRecibido)
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
@@ -62,8 +62,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	assert.Empty(t,dulceRecibido)
-
+	assert.Empty(t, dulceRecibido)
 }
 
 func inicialize() {

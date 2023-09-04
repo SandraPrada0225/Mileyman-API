@@ -13,7 +13,6 @@ func main() {
 
 	client := database.Client{}
 	db, err := client.Connect()
-
 	if err != nil {
 		panic(err)
 	}

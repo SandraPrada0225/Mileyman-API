@@ -28,5 +28,4 @@ func TestPing(t *testing.T) {
 	r.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusOK, response.Code)
-
 }
