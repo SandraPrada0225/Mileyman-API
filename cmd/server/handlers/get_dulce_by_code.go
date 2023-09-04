@@ -26,7 +26,7 @@ func (handler GetDulceByCode) Handle() gin.HandlerFunc {
 			switch err.(type) {
 			case database.NotFoundError:
 				c.JSON(http.StatusNotFound, err.Error())
-			case database.InternalServerError:
+			default:
 				c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			return

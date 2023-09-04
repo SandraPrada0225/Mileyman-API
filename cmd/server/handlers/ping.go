@@ -11,3 +11,4 @@ func (handler Ping) Handle() gin.HandlerFunc{
 		c.String(200,"Pong")
 	}
 }
+

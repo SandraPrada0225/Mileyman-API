@@ -18,7 +18,6 @@ func (c Client) Connect() (db *gorm.DB, err error) {
 
     if err != nil {
         panic(err.Error())
-    }
-
+    } 
     return db, nil
 }
