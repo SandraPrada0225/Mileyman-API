@@ -1,4 +1,4 @@
-## Descripción
+# Descripción
 [¿Por qué necesitamos este PR?]
 
 ## Tareas Resueltas
