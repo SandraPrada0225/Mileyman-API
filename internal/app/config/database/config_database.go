@@ -15,7 +15,7 @@ func GetConnectionLocal() connectionData {
 		Host:     "localhost:3306",
 		Schema:   "dulceria",
 		UserName: "root",
-		Password: "sandra123-",
+		Password: "",
 		Dialect:  "mysql",
 	}
 }
