@@ -20,7 +20,7 @@ func (e ErrorMessage) GetMessageWithParams(params Parameters) string {
 	msg := e.String()
 
 	for key, value := range params {
-		msg = fmt.Sprintf("%s.\n%s - %s", msg, key, value)
+		msg = fmt.Sprintf("%s. %s - %s", msg, key, value)
 	}
 
 	return msg
