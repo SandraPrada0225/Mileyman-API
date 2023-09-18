@@ -8,9 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	"Mileyman-API/internal/use_case/get_dulce_by_code/mocks"
+	"Mileyman-API/internal/use_case/mocks"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -33,21 +34,38 @@ func CreateServer() *gin.Engine {
 
 func TestOk(t *testing.T) {
 	r := CreateServer()
-	dulce := entities.Dulce{
-		ID:             2,
-		Nombre:         "Chocolatina",
-		PresentacionID: 1,
-		Descripcion:    "Deliciosa chocolatina que se derrite en tu boca",
-		Imagen:         "imagen",
-		Disponibles:    100,
-		Precio:         1000,
-		Peso:           40,
-		MarcaID:        1,
-		Codigo:         "2Mile",
+	expectedResponse := query.DetalleDulce{
+		ID:           2,
+		Nombre:       "Chocolatina",
+		Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
+		Imagen:       "imagen",
+		Disponibles:  100,
+		PrecioUnidad: 1000,
+		Peso:         40,
+		Codigo:       "2Mile",
+		Categorias: []entities.Categoria{
+			{
+				ID: 1,
+				Nombre: "Gomitas",
+			},
+			{
+				ID: 2,
+				Nombre: "Chocolates",
+			},
+		},
+		Presentacion: entities.Presentacion{
+			ID: 1,
+			Nombre: "Empaque",
+		},
+		Marca: entities.Marca{
+			ID: 2,
+			Nombre: "Jet",
+		},	
 	}
 
-	dulcejson, _ := json.Marshal(&dulce)
-	mockGetDulceByCode.On("Execute", "2Mile").Return(dulce, nil)
+	json, _ := json.Marshal(&expectedResponse)
+
+	mockGetDulceByCode.On("Execute", "2Mile").Return(expectedResponse, nil)
 	request := httptest.NewRequest("GET", "/api/dulces/2Mile", bytes.NewBuffer([]byte("")))
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
@@ -58,7 +76,7 @@ func TestOk(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, string(dulcejson), string(bodyResponse))
+	assert.Equal(t, string(json), string(bodyResponse))
 	mockGetDulceByCode.AssertNumberOfCalls(t, "Execute", 1)
 }
 

@@ -5,7 +5,7 @@ package handlers
 import (
 	"net/http"
 
-	"Mileyman-API/internal/domain/entities"
+	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/errors/database"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ type GetDulceByCode struct {
 }
 
 type UseCase interface {
-	Execute(codigo string) (entities.Dulce, error)
+	Execute(codigo string) (query.DetalleDulce, error)
 }
 
 func (handler GetDulceByCode) Handle() gin.HandlerFunc {

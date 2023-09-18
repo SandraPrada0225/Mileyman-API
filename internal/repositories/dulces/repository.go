@@ -1,9 +1,7 @@
 package dulces
 
 import (
-	"errors"
-
-	"Mileyman-API/internal/domain/entities"
+	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/errors/database"
 	errormessages "Mileyman-API/internal/domain/errors/error_messages"
 
@@ -14,13 +12,17 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func (r Repository) GetByCode(codigo string) (dulce entities.Dulce, err error) {
-	err = r.DB.Where("codigo = ?", codigo).First(&dulce).Error
+const GetDetalleDulceByCodeSP = "Call GetDetalleDulceByCode(?)"
+
+func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, err error) {
+
+	err = r.DB.Raw(GetDetalleDulceByCodeSP, codigo).Scan(&detalleDulce).Error
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Dulce{}, database.NewNotFoundError(errormessages.DulceNotFound)
+		params := errormessages.Parameters{
+			"resource": "dulces",
 		}
-		return entities.Dulce{}, database.NewInternalServerError(errormessages.InternalServerError)
+		err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
 	}
 
 	return

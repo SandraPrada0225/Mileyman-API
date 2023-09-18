@@ -2,6 +2,7 @@ package routes
 
 import (
 	"Mileyman-API/cmd/server/handlers"
+	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	getdulcebycode "Mileyman-API/internal/use_case/get_dulce_by_code"
 
@@ -40,9 +41,14 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
+	categoriasProvider := categorias.Repository {
+		DB: r.db,
+	}
+
 	// UseCase
 	getDulceByCodeUseCase := getdulcebycode.Implementation{
 		DulcesProvider: dulceProvider,
+		CategoriasProvider: &categoriasProvider,
 	}
 
 	// Handlers
