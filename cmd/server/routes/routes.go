@@ -32,22 +32,22 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	//ping
+	// ping
 	ping := handlers.Ping{}
 	r.rg.GET("/ping", ping.Handle())
-	
+
 	// providers
 	dulceProvider := dulces.Repository{
 		DB: r.db,
 	}
 
-	categoriasProvider := categorias.Repository {
+	categoriasProvider := categorias.Repository{
 		DB: r.db,
 	}
 
 	// UseCase
 	getDulceByCodeUseCase := getdulcebycode.Implementation{
-		DulcesProvider: dulceProvider,
+		DulcesProvider:     dulceProvider,
 		CategoriasProvider: &categoriasProvider,
 	}
 
@@ -60,5 +60,4 @@ func (r router) MapRoutes() {
 	p := r.rg.Group("/dulces")
 
 	p.GET("/:codigo", getDulceByCodeHandler.Handle())
-
 }

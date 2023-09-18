@@ -19,6 +19,6 @@ type DetalleDulce struct {
 	Marca            entities.Marca        `json:"marca" gorm:"embedded;embeddedPrefix:marca_"`
 }
 
-func(query *DetalleDulce) AddCategorias(categorias []entities.Categoria) {
+func (query *DetalleDulce) AddCategorias(categorias []entities.Categoria) {
 	query.Categorias = categorias
 }

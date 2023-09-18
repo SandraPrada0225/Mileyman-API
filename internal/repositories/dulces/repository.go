@@ -15,7 +15,6 @@ type Repository struct {
 const GetDetalleDulceByCodeSP = "Call GetDetalleDulceByCode(?)"
 
 func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, err error) {
-
 	err = r.DB.Raw(GetDetalleDulceByCodeSP, codigo).Scan(&detalleDulce).Error
 
 	if err != nil {

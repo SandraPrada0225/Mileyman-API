@@ -45,22 +45,22 @@ func TestOk(t *testing.T) {
 		Codigo:       "2Mile",
 		Categorias: []entities.Categoria{
 			{
-				ID: 1,
+				ID:     1,
 				Nombre: "Gomitas",
 			},
 			{
-				ID: 2,
+				ID:     2,
 				Nombre: "Chocolates",
 			},
 		},
 		Presentacion: entities.Presentacion{
-			ID: 1,
+			ID:     1,
 			Nombre: "Empaque",
 		},
 		Marca: entities.Marca{
-			ID: 2,
+			ID:     2,
 			Nombre: "Jet",
-		},	
+		},
 	}
 
 	json, _ := json.Marshal(&expectedResponse)

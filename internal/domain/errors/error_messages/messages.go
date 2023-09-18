@@ -4,7 +4,7 @@ import "fmt"
 
 type (
 	ErrorMessage string
-	Parameters map[string]interface{}
+	Parameters   map[string]interface{}
 )
 
 const (
@@ -12,11 +12,11 @@ const (
 	InternalServerError ErrorMessage = "Ha currido un error inesperado"
 )
 
-func(e ErrorMessage) String() string {
+func (e ErrorMessage) String() string {
 	return string(e)
 }
 
-func(e ErrorMessage) GetMessageWithParams(params Parameters) string {
+func (e ErrorMessage) GetMessageWithParams(params Parameters) string {
 	msg := e.String()
 
 	for key, value := range params {

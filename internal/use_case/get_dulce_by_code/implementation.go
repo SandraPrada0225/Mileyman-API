@@ -11,7 +11,6 @@ type Implementation struct {
 }
 
 func (UseCase Implementation) Execute(codigo string) (query.DetalleDulce, error) {
-
 	response, err := UseCase.DulcesProvider.GetByCode(codigo)
 	if err != nil {
 		return query.DetalleDulce{}, err

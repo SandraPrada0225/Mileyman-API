@@ -30,8 +30,8 @@ func TestGetBycodeOK(t *testing.T) {
 
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
-		AddRow(mockCategorias[0].ID, mockCategorias[0].Nombre).
-		AddRow(mockCategorias[1].ID, mockCategorias[1].Nombre))
+			AddRow(mockCategorias[0].ID, mockCategorias[0].Nombre).
+			AddRow(mockCategorias[1].ID, mockCategorias[1].Nombre))
 	response, err := repository.GetCategoriasByDulceID(1)
 
 	assert.NoError(t, err)
@@ -66,7 +66,7 @@ func GetMockCategorias() (categorias []entities.Categoria) {
 			Nombre: "Gomitas",
 		},
 		{
-			ID: 2,
+			ID:     2,
 			Nombre: "Chocolates",
 		},
 	}
