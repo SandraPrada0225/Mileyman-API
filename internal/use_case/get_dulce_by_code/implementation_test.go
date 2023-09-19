@@ -18,6 +18,11 @@ var (
 	mockCategoriaProvider *mocks.MockCategoriasProvider
 )
 
+const (
+	errInternalServer = "database.InternalServerError"
+	errNotFound       = "database.NotFoundError"
+)
+
 func initialize() {
 	mockDulceProvider = new(mocks.MockDulceProvider)
 	mockCategoriaProvider = new(mocks.MockCategoriasProvider)
@@ -54,7 +59,7 @@ func TestWhenGetDulceWentWrongShouldReturnInternalServerError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Empty(t, dulce)
-	assert.Equal(t, "database.InternalServerError", errType)
+	assert.Equal(t, errInternalServer, errType)
 	mockDulceProvider.AssertNumberOfCalls(t, "GetByCode", 1)
 	mockCategoriaProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
@@ -69,7 +74,7 @@ func TestWhenDulceNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Empty(t, dulce)
-	assert.Equal(t, "database.NotFoundError", errType)
+	assert.Equal(t, errNotFound, errType)
 	mockDulceProvider.AssertNumberOfCalls(t, "GetByCode", 1)
 	mockCategoriaProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
@@ -89,7 +94,7 @@ func TestWhenGetCategoriasWentWrongShouldReturnInternalServer(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Empty(t, response)
-	assert.Equal(t, "database.InternalServerError", errType)
+	assert.Equal(t, errInternalServer, errType)
 	mockDulceProvider.AssertNumberOfCalls(t, "GetByCode", 1)
 	mockCategoriaProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
 }
