@@ -1,4 +1,4 @@
-package categorias
+package presentaciones
 
 import (
 	"reflect"
@@ -19,35 +19,36 @@ var (
 )
 
 const (
-	QuerySelectByCode = "Call GetCategoriasByDulceID(?)"
+	QuerySelectAll = "SELECT * FROM `presentaciones`"
 )
 
-func TestGetBycodeOK(t *testing.T) {
+func TestGetAllOK(t *testing.T) {
 	inicialize()
 
-	mockCategorias := GetMockCategorias()
+	presentaciones := GetPresentaciones()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
-			AddRow(mockCategorias[0].ID, mockCategorias[0].Nombre).
-			AddRow(mockCategorias[1].ID, mockCategorias[1].Nombre))
-	response, err := repository.GetCategoriasByDulceID(1)
+			AddRow(presentaciones[0].ID, presentaciones[0].Nombre).
+			AddRow(presentaciones[1].ID, presentaciones[1].Nombre),
+	)
+	presentacionesRecibidos, err := repository.GetAll()
 
 	assert.NoError(t, err)
-	assert.Equal(t, mockCategorias, response)
+	assert.Equal(t, presentaciones, presentacionesRecibidos)
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
 	inicialize()
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
 
-	dulceRecibido, err := repository.GetCategoriasByDulceID(1)
+	presentacionesRecibidos, err := repository.GetAll()
 
 	typeErr := reflect.TypeOf(err).String()
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	assert.Empty(t, dulceRecibido)
+	assert.Empty(t, presentacionesRecibidos)
 }
 
 func inicialize() {
@@ -58,16 +59,17 @@ func inicialize() {
 	}
 }
 
-func GetMockCategorias() (categorias []entities.Categoria) {
-	categorias = []entities.Categoria{
+func GetPresentaciones() (presentaciones []entities.Presentacion) {
+	presentaciones = []entities.Presentacion{
 		{
 			ID:     1,
-			Nombre: "Gomitas",
+			Nombre: "Caja",
 		},
 		{
 			ID:     2,
-			Nombre: "Chocolates",
+			Nombre: "Bolsa",
 		},
 	}
+
 	return
 }

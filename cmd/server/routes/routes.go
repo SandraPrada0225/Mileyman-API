@@ -4,7 +4,10 @@ import (
 	"Mileyman-API/cmd/server/handlers"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
+	"Mileyman-API/internal/repositories/marcas"
+	"Mileyman-API/internal/repositories/presentaciones"
 	getdulcebycode "Mileyman-API/internal/use_case/get_dulce_by_code"
+	getfiltros "Mileyman-API/internal/use_case/get_filtros"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -41,6 +44,14 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
+	presentacionProvider := presentaciones.Repository{
+		DB: r.db,
+	}
+
+	marcaProvider := marcas.Repository{
+		DB: r.db,
+	}
+
 	categoriasProvider := categorias.Repository{
 		DB: r.db,
 	}
@@ -51,13 +62,25 @@ func (r router) MapRoutes() {
 		CategoriasProvider: &categoriasProvider,
 	}
 
+	getFitros := getfiltros.Implementation{
+		CategoriasProvider:     categoriasProvider,
+		MarcasProvider:         marcaProvider,
+		PresentacionesProvider: presentacionProvider,
+	}
+
 	// Handlers
 	getDulceByCodeHandler := handlers.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
 	}
 
-	// endPoint
-	p := r.rg.Group("/dulces")
+	getFiltrosHandler := handlers.GetFiltros{
+		UseCase: getFitros,
+	}
 
-	p.GET("/:codigo", getDulceByCodeHandler.Handle())
+	// endPoint
+	dulcesGrupo := r.rg.Group("/dulces")
+	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
+
+	filtrosGrupo := r.rg.Group("/filtros")
+	filtrosGrupo.GET("/", getFiltrosHandler.Handle())
 }

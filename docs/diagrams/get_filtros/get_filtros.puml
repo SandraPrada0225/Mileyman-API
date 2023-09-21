@@ -1,0 +1,52 @@
+@startuml Get filtros
+
+participant Caller
+participant Handler
+participant UseCase
+participant MarcasProvider as marcasp
+participant PresentacionesProvider as presentacionesp
+participant CategoriasProvider as categoriasp
+participant DB
+participant Query
+
+
+Caller -> Handler++ : GET /api/filtros/
+    Handler -> UseCase++ : Execute()
+        UseCase -> marcasp++ : Getall()
+        marcasp -> DB++ : Select * from marcas
+        DB -> marcasp-- : <[]marcas, err error>
+        alt err != nil
+            marcasp -> UseCase : <nil, err>
+            UseCase -> Handler : <nil, err>
+            Handler -> Caller : error
+        end
+        marcasp -> UseCase-- : <[]marcas, nil>
+        UseCase -> presentacionesp++ : Getall()
+        presentacionesp -> DB++ : Select * from presentaciones
+        DB -> presentacionesp-- : <[]presentaciones, err error>
+        alt err != nil
+            presentacionesp -> UseCase : <nil, err>
+            UseCase -> Handler : <nil, err>
+            Handler -> Caller : error
+        end
+        presentacionesp -> UseCase-- : <[]presentaciones, nil>
+        UseCase -> categoriasp++ : Getall()
+        categoriasp -> DB++ : Select * from categorias
+        DB -> categoriasp-- : <[]categorias, err error>
+        alt err != nil
+            categoriasp -> UseCase: <nil, err>
+            UseCase -> Handler : <nil, err>
+            Handler -> Caller : error
+        end
+        categoriasp -> UseCase-- : <[]categorias, nil>
+        UseCase -> Query++ : GetFiltros{marcas, presentaciones, categorias}
+        Query -> UseCase-- : <Getfiltros>
+    UseCase -> Handler-- : <query.Getfiltros, nil>
+Handler -> Caller-- : <200, filtros>
+
+
+
+
+
+
+        
