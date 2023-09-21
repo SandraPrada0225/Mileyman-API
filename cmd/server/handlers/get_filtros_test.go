@@ -11,7 +11,7 @@ import (
 	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	mocks "Mileyman-API/internal/use_case/get_filtros/moks"
+	mocks "Mileyman-API/internal/use_case/mocks"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

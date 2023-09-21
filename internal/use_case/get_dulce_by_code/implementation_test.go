@@ -15,7 +15,7 @@ import (
 var (
 	useCase               Implementation
 	mockDulceProvider     *mocks.MockDulceProvider
-	mockCategoriaProvider *mocks.MockCategoriasProvider
+	mockCategoriaProvider *mocks.MockCategoriaProvider
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 
 func initialize() {
 	mockDulceProvider = new(mocks.MockDulceProvider)
-	mockCategoriaProvider = new(mocks.MockCategoriasProvider)
+	mockCategoriaProvider = new(mocks.MockCategoriaProvider)
 	useCase = Implementation{
 		DulcesProvider:     mockDulceProvider,
 		CategoriasProvider: mockCategoriaProvider,
