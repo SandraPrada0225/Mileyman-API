@@ -1,4 +1,4 @@
-package handlers
+package getfiltros
 
 import (
 	"net/http"

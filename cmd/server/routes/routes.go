@@ -1,13 +1,15 @@
 package routes
 
 import (
-	"Mileyman-API/cmd/server/handlers"
+	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/get_dulce_by_code"
+	getfiltroshandler "Mileyman-API/cmd/server/handlers/get_filtros"
+	"Mileyman-API/cmd/server/handlers/ping"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	"Mileyman-API/internal/repositories/marcas"
 	"Mileyman-API/internal/repositories/presentaciones"
-	getdulcebycode "Mileyman-API/internal/use_case/get_dulce_by_code"
-	getfiltros "Mileyman-API/internal/use_case/get_filtros"
+	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
+	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -35,9 +37,9 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	// ping
-	ping := handlers.Ping{}
-	r.rg.GET("/ping", ping.Handle())
+	// pingHandler
+	pingHandler := ping.Ping{}
+	r.rg.GET("/ping", pingHandler.Handle())
 
 	// providers
 	dulceProvider := dulces.Repository{
@@ -57,23 +59,23 @@ func (r router) MapRoutes() {
 	}
 
 	// UseCase
-	getDulceByCodeUseCase := getdulcebycode.Implementation{
+	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
 		DulcesProvider:     dulceProvider,
 		CategoriasProvider: &categoriasProvider,
 	}
 
-	getFitros := getfiltros.Implementation{
+	getFitros := getfiltrosusecase.Implementation{
 		CategoriasProvider:     categoriasProvider,
 		MarcasProvider:         marcaProvider,
 		PresentacionesProvider: presentacionProvider,
 	}
 
 	// Handlers
-	getDulceByCodeHandler := handlers.GetDulceByCode{
+	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
 	}
 
-	getFiltrosHandler := handlers.GetFiltros{
+	getFiltrosHandler := getfiltroshandler.GetFiltros{
 		UseCase: getFitros,
 	}
 

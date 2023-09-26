@@ -21,7 +21,8 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 
 	if err != nil {
 		params := errormessages.Parameters{
-			"resource": "dulces",
+			"resource":   "dulces",
+			"dulce_code": codigo,
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
