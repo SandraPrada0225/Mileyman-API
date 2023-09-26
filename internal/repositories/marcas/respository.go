@@ -15,7 +15,11 @@ type Repository struct {
 func (r Repository) GetAll() (marcas []entities.Marca, err error) {
 	err = r.DB.Find(&marcas).Error
 	if err != nil {
-		return []entities.Marca{}, database.NewInternalServerError(errormessages.InternalServerError)
+		params := errormessages.Parameters{
+			"resource": "marcas",
+			"error":    err.Error(),
+		}
+		return []entities.Marca{}, database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
 	}
 	return
 }

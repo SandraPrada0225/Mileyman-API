@@ -1,0 +1,35 @@
+@startuml Get Detalle Dulce By Code
+
+participant Caller
+participant Handler
+participant UseCase
+participant DulcesProvider as dulcesp
+participant CategoriasProvider as categoriasp
+participant Query
+participant DB
+
+Caller -> Handler ++: GET api/dulces/{codigo}
+    Handler -> UseCase ++: Execute(codigo)
+        UseCase -> dulcesp ++: GetByCode(codigo)
+        dulcesp -> DB ++: Call GetDetalleDulceByCode(codigo)
+        DB -> dulcesp --: <query query.detalleDulce,err error>
+        alt err != nil
+            dulcesp -> UseCase: <nil,error>
+            UseCase -> Handler: <nil, error>
+            Handler -> Caller: error
+        end
+
+        dulcesp -> UseCase --: <query, nil>
+        UseCase -> categoriasp ++: GetCategoriasByDulceID(query.ID)
+        categoriasp -> DB ++: Call GetCategoriasByDulceID(dulceID)
+        DB -> categoriasp --: <[]categorias, err>
+        alt err != nil
+            categoriasp -> UseCase: <nil,error>
+            UseCase -> Handler: <nil, error>
+            Handler -> Caller: error
+        end
+        UseCase -> Query ++: query.AddCategorias(categorias)
+        Query -> Query: query.Categorias = categorias
+        Query -> UseCase --: query
+    UseCase -> Handler --: query, nil
+Handler -> Caller --: 200 OK, query(response)
