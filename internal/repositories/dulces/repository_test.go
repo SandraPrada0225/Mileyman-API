@@ -21,7 +21,9 @@ var (
 )
 
 const (
+	MockDulceID       = uint64(132423)
 	QuerySelectByCode = "Call GetDetalleDulceByCode(?)"
+	QuerySelectByID   = "Call GetDetalleDulceByID(?)"
 )
 
 func TestGetBycodeOK(t *testing.T) {
@@ -66,6 +68,48 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
+func TestGetByIDOK(t *testing.T) {
+	inicialize()
+
+	dulce := GetResponse()
+
+	mockDB.ExpectQuery(QuerySelectByID).WithArgs(dulce.ID).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "presentacion_nombre", "descripcion", "imagen", "disponibles", "precio_unidad", "peso", "marca_id", "marca_nombre", "codigo"}).AddRow(
+			dulce.ID, dulce.Nombre, dulce.Presentacion.ID, dulce.Presentacion.Nombre, dulce.Descripcion, dulce.Imagen, dulce.Disponibles, dulce.PrecioUnidad, dulce.Peso, dulce.Marca.ID, dulce.Marca.Nombre, dulce.Codigo,
+		),
+	)
+	dulceRecibido, err := repository.GetByID(dulce.ID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, dulce, dulceRecibido)
+}
+
+func TestByIDErrorNotFound(t *testing.T) {
+	inicialize()
+	mockDB.ExpectQuery(QuerySelectByID).WithArgs().WillReturnError(gorm.ErrRecordNotFound)
+
+	dulceRecibido, err := repository.GetByID(MockDulceID)
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.NotFoundError", typeErr)
+	assert.Empty(t, dulceRecibido)
+}
+
+func TestByIDInternalServerError(t *testing.T) {
+	inicialize()
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(MockDulceID).WillReturnError(gorm.ErrInvalidData)
+
+	dulceRecibido, err := repository.GetByID(MockDulceID)
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.Empty(t, dulceRecibido)
+}
+
 func inicialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
@@ -76,7 +120,7 @@ func inicialize() {
 
 func GetResponse() (response query.DetalleDulce) {
 	response = query.DetalleDulce{
-		ID:     2,
+		ID:     MockDulceID,
 		Nombre: "Chocolatina",
 		Presentacion: entities.Presentacion{
 			ID:     1,

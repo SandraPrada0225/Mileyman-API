@@ -22,3 +22,24 @@ func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, err
 	}
 	return query.DetalleDulce{}, err
 }
+
+func (mock *MockDulceProvider) GetByID(id uint64) (query.DetalleDulce, error) {
+	args := mock.Called(id)
+	response := args.Get(0)
+	err := args.Error(1)
+
+	if response != nil {
+		return response.(query.DetalleDulce), err
+	}
+	return query.DetalleDulce{}, err
+}
+
+func (mock *MockDulceProvider) GetDulcesListByCarritoID(carrito_id uint64) ([]uint64, error) {
+	args := mock.Called(carrito_id)
+	response := args.Get(0)
+	err := args.Error(1)
+	if response != nil {
+		return response.([]uint64), err
+	}
+	return []uint64{}, err
+}
