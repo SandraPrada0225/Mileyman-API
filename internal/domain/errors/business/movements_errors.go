@@ -15,7 +15,7 @@ func NewMovementsError() MovementResult {
 	return MovementResult{}
 }
 
-func (m MovementsResult) AddResult(movement int, dulceID uint64, err string) {
+func (m *MovementsResult) AddResult(movement int, dulceID uint64, err string) {
 	m.Result = append(m.Result, MovementResult{
 		Movement: movement,
 		DulceID:  dulceID,
