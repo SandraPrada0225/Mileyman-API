@@ -1,13 +1,16 @@
 package routes
 
 import (
+	getcarritobyidhandler "Mileyman-API/cmd/server/handlers/get_carrito_by_id"
 	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/get_dulce_by_code"
 	getfiltroshandler "Mileyman-API/cmd/server/handlers/get_filtros"
 	"Mileyman-API/cmd/server/handlers/ping"
+	"Mileyman-API/internal/repositories/carritos"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	"Mileyman-API/internal/repositories/marcas"
 	"Mileyman-API/internal/repositories/presentaciones"
+	getcarritobyidusecase "Mileyman-API/internal/use_case/get_carrito_by_id"
 	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
 	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
 
@@ -42,7 +45,7 @@ func (r router) MapRoutes() {
 	r.rg.GET("/ping", pingHandler.Handle())
 
 	// providers
-	dulceProvider := dulces.Repository{
+	dulcesProvider := dulces.Repository{
 		DB: r.db,
 	}
 
@@ -58,16 +61,26 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
-	// UseCase
-	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
-		DulcesProvider:     dulceProvider,
-		CategoriasProvider: &categoriasProvider,
+	carritosProvider := carritos.Repository{
+		DB: r.db,
 	}
 
-	getFitros := getfiltrosusecase.Implementation{
+	// UseCase
+	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
+		DulcesProvider:     dulcesProvider,
+		CategoriasProvider: categoriasProvider,
+	}
+
+	getFiltros := getfiltrosusecase.Implementation{
 		CategoriasProvider:     categoriasProvider,
 		MarcasProvider:         marcaProvider,
 		PresentacionesProvider: presentacionProvider,
+	}
+
+	getCarritoByIDUseCase := getcarritobyidusecase.Implementation{
+		CarritoProvider:    carritosProvider,
+		DulcesProvider:     dulcesProvider,
+		CategoriasProvider: categoriasProvider,
 	}
 
 	// Handlers
@@ -76,7 +89,11 @@ func (r router) MapRoutes() {
 	}
 
 	getFiltrosHandler := getfiltroshandler.GetFiltros{
-		UseCase: getFitros,
+		UseCase: getFiltros,
+	}
+
+	getCarritoByIDHandler := getcarritobyidhandler.GetDetalleCarritoById{
+		UseCase: getCarritoByIDUseCase,
 	}
 
 	// endPoint
@@ -85,4 +102,7 @@ func (r router) MapRoutes() {
 
 	filtrosGrupo := r.rg.Group("/filtros")
 	filtrosGrupo.GET("/", getFiltrosHandler.Handle())
+
+	carritosGroup := r.rg.Group("/carritos")
+	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
 }
