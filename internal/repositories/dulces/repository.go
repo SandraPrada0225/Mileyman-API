@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"Mileyman-API/internal/domain/dto/query"
+	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
 	errormessages "Mileyman-API/internal/domain/errors/error_messages"
 
@@ -32,4 +33,20 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 	}
 
 	return
+}
+
+func (r Repository) GetByID(id uint64) (dulce entities.Dulce, err error) {
+	err = r.DB.Where("id = ?", id).Take(&dulce).Error
+	if err != nil {
+		params := errormessages.Parameters{
+			"resource": "dulce",
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
+		} else {
+			err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
+		}
+	}
+	return
+
 }

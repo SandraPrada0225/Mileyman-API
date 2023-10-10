@@ -4,6 +4,7 @@ package mocks
 
 import (
 	"Mileyman-API/internal/domain/dto/query"
+	"Mileyman-API/internal/domain/entities"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -21,4 +22,15 @@ func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, err
 		return response.(query.DetalleDulce), err
 	}
 	return query.DetalleDulce{}, err
+}
+
+func (mock *MockDulceProvider) GetByID(id uint64) (entities.Dulce, error){
+	args := mock.Called(id)
+	response := args.Get(0)
+	err := args.Error(1)
+
+	if response != nil {
+		return response.(entities.Dulce), err
+	}
+	return entities.Dulce{}, err
 }

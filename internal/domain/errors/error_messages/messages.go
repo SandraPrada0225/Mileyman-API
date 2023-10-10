@@ -8,8 +8,11 @@ type (
 )
 
 const (
-	DulceNotFound       ErrorMessage = "No se encontró un dulce con ese codigo"
-	InternalServerError ErrorMessage = "Ha currido un error inesperado"
+	CarritoDulceNotFound    ErrorMessage = "No se encontró un detalle carrito_dulce con ese codigo"
+	DulceNotFound           ErrorMessage = "No se encontró un dulce con ese codigo"
+	InternalServerError     ErrorMessage = "Ha ocurrido un error inesperado"
+	IdMustBeAPositiveNumber ErrorMessage = "el ID debe ser un número positivo"
+	UnitLimitExceded        ErrorMessage = "las unidades requeridad exceden las disponibles"
 )
 
 func (e ErrorMessage) String() string {
