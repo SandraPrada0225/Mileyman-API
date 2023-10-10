@@ -1,15 +1,17 @@
 package routes
 
 import (
+	getcarritobyidhandler "Mileyman-API/cmd/server/handlers/get_carrito_by_id"
 	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/get_dulce_by_code"
-	updatecarritohandler "Mileyman-API/cmd/server/handlers/update_carrito"
 	getfiltroshandler "Mileyman-API/cmd/server/handlers/get_filtros"
 	"Mileyman-API/cmd/server/handlers/ping"
-	carritos "Mileyman-API/internal/repositories/Carritos"
+	updatecarritohandler "Mileyman-API/cmd/server/handlers/update_carrito"
+	"Mileyman-API/internal/repositories/carritos"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	"Mileyman-API/internal/repositories/marcas"
 	"Mileyman-API/internal/repositories/presentaciones"
+	getcarritobyidusecase "Mileyman-API/internal/use_case/get_carrito_by_id"
 	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
 	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
 	updatecarrito "Mileyman-API/internal/use_case/update_carrito"
@@ -45,7 +47,7 @@ func (r router) MapRoutes() {
 	r.rg.GET("/ping", pingHandler.Handle())
 
 	// providers
-	dulceProvider := dulces.Repository{
+	dulcesProvider := dulces.Repository{
 		DB: r.db,
 	}
 
@@ -60,27 +62,33 @@ func (r router) MapRoutes() {
 	categoriasProvider := categorias.Repository{
 		DB: r.db,
 	}
-	carritosdulcesProvider := carritos.Repository{
+
+	carritosProvider := carritos.Repository{
 		DB: r.db,
 	}
 
 	// UseCase
 	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
-		DulcesProvider:     dulceProvider,
-		CategoriasProvider: &categoriasProvider,
+		DulcesProvider:     dulcesProvider,
+		CategoriasProvider: categoriasProvider,
 	}
 
-	getFitros := getfiltrosusecase.Implementation{
+	getFiltros := getfiltrosusecase.Implementation{
 		CategoriasProvider:     categoriasProvider,
 		MarcasProvider:         marcaProvider,
 		PresentacionesProvider: presentacionProvider,
 	}
 
 	updatecarrito := updatecarrito.Implementation{
-		CarritosDulcesProvider: carritosdulcesProvider,
-		DulcesProvider: dulceProvider,
+		CarritosProvider: carritosProvider,
+		DulcesProvider:   dulcesProvider,
+	}
 
-	} 
+	getCarritoByIDUseCase := getcarritobyidusecase.Implementation{
+		CarritoProvider:    carritosProvider,
+		DulcesProvider:     dulcesProvider,
+		CategoriasProvider: categoriasProvider,
+	}
 
 	// Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
@@ -88,7 +96,11 @@ func (r router) MapRoutes() {
 	}
 
 	getFiltrosHandler := getfiltroshandler.GetFiltros{
-		UseCase: getFitros,
+		UseCase: getFiltros,
+	}
+
+	getCarritoByIDHandler := getcarritobyidhandler.GetDetalleCarritoById{
+		UseCase: getCarritoByIDUseCase,
 	}
 
 	updateCarritoHandler := updatecarritohandler.UpdateCarrito{
@@ -102,6 +114,7 @@ func (r router) MapRoutes() {
 	filtrosGrupo := r.rg.Group("/filtros")
 	filtrosGrupo.GET("/", getFiltrosHandler.Handle())
 
-	carritos := r.rg.Group("/carritos")
-	carritos.PUT("/:id", updateCarritoHandler.Handle())
+	carritosGroup := r.rg.Group("/carritos")
+	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
+	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
 }

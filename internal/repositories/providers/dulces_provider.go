@@ -11,4 +11,6 @@ import (
 type DulcesProvider interface {
 	GetByCode(codigo string) (dulce query.DetalleDulce, err error)
 	GetByID(id uint64) (dulce entities.Dulce, err error)
+	GetDetailByID(id uint64) (dulce query.DetalleDulce, err error)
+	GetDulcesListByCarritoID(carrito_id uint64) ([]uint64, error)
 }

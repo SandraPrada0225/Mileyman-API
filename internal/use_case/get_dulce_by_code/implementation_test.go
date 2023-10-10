@@ -34,8 +34,8 @@ func initialize() {
 
 func TestWhenSuccesfullReturnDulce(t *testing.T) {
 	initialize()
-	partialResponse := GetPartialResponse()
-	mockCategorias := GetMockCategorias()
+	partialResponse := getPartialResponse()
+	mockCategorias := getMockCategorias()
 	expectedResponse := partialResponse
 	expectedResponse.Categorias = mockCategorias
 
@@ -51,7 +51,7 @@ func TestWhenSuccesfullReturnDulce(t *testing.T) {
 
 func TestWhenGetDulceWentWrongShouldReturnInternalServerError(t *testing.T) {
 	initialize()
-	expectedDulce := GetPartialResponse()
+	expectedDulce := getPartialResponse()
 	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(query.DetalleDulce{}, database.NewInternalServerError("error"))
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
@@ -66,7 +66,7 @@ func TestWhenGetDulceWentWrongShouldReturnInternalServerError(t *testing.T) {
 
 func TestWhenDulceNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 	initialize()
-	expectedDulce := GetPartialResponse()
+	expectedDulce := getPartialResponse()
 	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(query.DetalleDulce{}, database.NewNotFoundError("error"))
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
@@ -81,8 +81,8 @@ func TestWhenDulceNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 
 func TestWhenGetCategoriasWentWrongShouldReturnInternalServer(t *testing.T) {
 	initialize()
-	partialResponse := GetPartialResponse()
-	mockCategorias := GetMockCategorias()
+	partialResponse := getPartialResponse()
+	mockCategorias := getMockCategorias()
 	expectedResponse := partialResponse
 	expectedResponse.Categorias = mockCategorias
 
@@ -99,7 +99,7 @@ func TestWhenGetCategoriasWentWrongShouldReturnInternalServer(t *testing.T) {
 	mockCategoriaProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
 }
 
-func GetPartialResponse() query.DetalleDulce {
+func getPartialResponse() query.DetalleDulce {
 	return query.DetalleDulce{
 		ID:           2,
 		Nombre:       "Chocolatina",
@@ -120,7 +120,7 @@ func GetPartialResponse() query.DetalleDulce {
 	}
 }
 
-func GetMockCategorias() (categorias []entities.Categoria) {
+func getMockCategorias() (categorias []entities.Categoria) {
 	categorias = []entities.Categoria{
 		{
 			ID:     1,
