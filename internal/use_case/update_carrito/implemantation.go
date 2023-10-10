@@ -11,15 +11,15 @@ import (
 )
 
 type Implementation struct {
-	CarritosDulcesProvider providers.CarritosDulcesProvider
-	DulcesProvider         providers.DulcesProvider
+	CarritosProvider providers.CarritosProvider
+	DulcesProvider   providers.DulcesProvider
 }
 
 func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.Body) query.MovementsResult {
 	movementsResult := query.NewMovementsResult()
 	for index, movement := range movements.Movements {
 		var operationResult constants.CarritoOperationResult
-		carritoDulce, exists, err := UseCase.CarritosDulcesProvider.GetDulceByCarritoIDAndDulceID(carritoID, movement.DulceID)
+		carritoDulce, exists, err := UseCase.CarritosProvider.GetDulceByCarritoIDAndDulceID(carritoID, movement.DulceID)
 		if err != nil {
 			movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
 			continue
@@ -27,7 +27,7 @@ func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.
 		switch {
 		case movement.Unidades == 0:
 			operationResult = constants.Deleted
-			err = UseCase.CarritosDulcesProvider.DeleteDulceInCarrito(carritoDulce)
+			err = UseCase.CarritosProvider.DeleteDulceInCarrito(carritoDulce)
 			if err != nil {
 				movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
 				continue
@@ -69,6 +69,6 @@ func (UseCase Implementation) save(movement updatecarrito.Movement, carritoDulce
 
 	carritoDulce = entities.UpdateCarritoDulce(carritoDulce, movement.Unidades, dulce.Precio)
 
-	err = UseCase.CarritosDulcesProvider.AddDulceInCarrito(carritoDulce)
+	err = UseCase.CarritosProvider.AddDulceInCarrito(carritoDulce)
 	return err
 }

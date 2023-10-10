@@ -6,7 +6,7 @@ import (
 )
 
 type Implementation struct {
-	CarritoProvider    providers.CarritoProvider
+	CarritoProvider    providers.CarritosProvider
 	DulcesProvider     providers.DulcesProvider
 	CategoriasProvider providers.CategoriasProvider
 }
