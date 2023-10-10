@@ -25,7 +25,7 @@ func (useCase Implementation) Execute(id uint64) (query.GetDetalleCarrito, error
 	var dulcesList []query.DetalleDulce
 
 	for _, dulceID := range dulcesIDList {
-		dulce, err := useCase.DulcesProvider.GetByID(dulceID)
+		dulce, err := useCase.DulcesProvider.GetDetailByID(dulceID)
 		if err != nil {
 			return query.GetDetalleCarrito{}, err
 		}

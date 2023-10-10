@@ -38,7 +38,7 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 
 const GetDetalleDulceByIDSP = "Call GetDetalleDulceByID(?)"
 
-func (r Repository) GetByID(id uint64) (detalleDulce query.DetalleDulce, err error) {
+func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, err error) {
 	err = r.DB.Raw(GetDetalleDulceByIDSP, id).Take(&detalleDulce).Error
 
 	if err != nil {

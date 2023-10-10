@@ -68,7 +68,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
-func TestGetByIDOK(t *testing.T) {
+func TestGetDetailByIDOK(t *testing.T) {
 	inicialize()
 
 	dulce := GetResponse()
@@ -78,17 +78,17 @@ func TestGetByIDOK(t *testing.T) {
 			dulce.ID, dulce.Nombre, dulce.Presentacion.ID, dulce.Presentacion.Nombre, dulce.Descripcion, dulce.Imagen, dulce.Disponibles, dulce.PrecioUnidad, dulce.Peso, dulce.Marca.ID, dulce.Marca.Nombre, dulce.Codigo,
 		),
 	)
-	dulceRecibido, err := repository.GetByID(dulce.ID)
+	dulceRecibido, err := repository.GetDetailByID(dulce.ID)
 
 	assert.NoError(t, err)
 	assert.Equal(t, dulce, dulceRecibido)
 }
 
-func TestByIDErrorNotFound(t *testing.T) {
+func TestGetDetailByIDErrorNotFound(t *testing.T) {
 	inicialize()
 	mockDB.ExpectQuery(QuerySelectByID).WithArgs().WillReturnError(gorm.ErrRecordNotFound)
 
-	dulceRecibido, err := repository.GetByID(MockDulceID)
+	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
 
 	typeErr := reflect.TypeOf(err).String()
 
@@ -97,11 +97,11 @@ func TestByIDErrorNotFound(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
-func TestByIDInternalServerError(t *testing.T) {
+func TestGetDetailByIDInternalServerError(t *testing.T) {
 	inicialize()
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(MockDulceID).WillReturnError(gorm.ErrInvalidData)
 
-	dulceRecibido, err := repository.GetByID(MockDulceID)
+	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
 
 	typeErr := reflect.TypeOf(err).String()
 
