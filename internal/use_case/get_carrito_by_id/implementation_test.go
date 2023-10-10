@@ -31,9 +31,9 @@ func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesIDList(), nil)
-	mockDulcesProvider.On("GetByID", mockDulceID1).
+	mockDulcesProvider.On("GetDetailByID", mockDulceID1).
 		Return(getPartialResponse1(), nil)
-	mockDulcesProvider.On("GetByID", mockDulceID2).
+	mockDulcesProvider.On("GetDetailByID", mockDulceID2).
 		Return(getPartialResponse2(), nil)
 	mockCategoriasProvider.On("GetCategoriasByDulceID", mockDulceID1).
 		Return(getMockCategorias1(), nil)
@@ -46,7 +46,7 @@ func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 	assert.Equal(t, getMockExpectedResponse(), queryResponse)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 2)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 2)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 2)
 }
 
@@ -66,7 +66,7 @@ func TestWhenCarritoWasNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 	assert.Equal(t, "database.NotFoundError", typeErr)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 0)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 0)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
 
@@ -86,7 +86,7 @@ func TestWhenCarritoWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 0)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 0)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
 
@@ -106,7 +106,7 @@ func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 0)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
 
@@ -117,7 +117,7 @@ func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesIDList(), nil)
-	mockDulcesProvider.On("GetByID", mockDulceID1).
+	mockDulcesProvider.On("GetDetailByID", mockDulceID1).
 		Return(query.DetalleDulce{}, database.NewInternalServerError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID)
@@ -128,7 +128,7 @@ func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 1)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 1)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
 }
 
@@ -139,7 +139,7 @@ func TestWhenGeCategoriasByDulceIDWentWrongThenShouldReturnInternalServerError(t
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesIDList(), nil)
-	mockDulcesProvider.On("GetByID", mockDulceID1).
+	mockDulcesProvider.On("GetDetailByID", mockDulceID1).
 		Return(getPartialResponse1(), nil)
 	mockCategoriasProvider.On("GetCategoriasByDulceID", mockDulceID1).
 		Return([]entities.Categoria{}, database.NewInternalServerError("error"))
@@ -152,7 +152,7 @@ func TestWhenGeCategoriasByDulceIDWentWrongThenShouldReturnInternalServerError(t
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 1)
+	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 1)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
 }
 
