@@ -25,10 +25,10 @@ func (r Repository) GetAll() (categorias []entities.Categoria, err error) {
 	return
 }
 
-const GetDetalleDulceByCodeSP = "Call GetCategoriasByDulceID(?)"
+const GetCategoriasByDulceIDSP = "Call GetCategoriasByDulceID(?)"
 
 func (r Repository) GetCategoriasByDulceID(dulceID uint64) (categorias []entities.Categoria, err error) {
-	err = r.DB.Raw(GetDetalleDulceByCodeSP, dulceID).Scan(&categorias).Error
+	err = r.DB.Raw(GetCategoriasByDulceIDSP, dulceID).Scan(&categorias).Error
 
 	if err != nil {
 		params := errormessages.Parameters{
