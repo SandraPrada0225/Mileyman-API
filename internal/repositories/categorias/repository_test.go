@@ -20,6 +20,7 @@ var (
 
 const (
 	QuerySelectByCode = "Call GetCategoriasByDulceID(?)"
+	QuerySelectAll    = "SELECT * FROM `Categorias`"
 )
 
 func TestGetBycodeOK(t *testing.T) {
@@ -48,6 +49,35 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	assert.Empty(t, dulceRecibido)
+}
+
+func TestGetAllOK(t *testing.T) {
+	inicialize()
+
+	categorias := GetMockCategorias()
+
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "nombre"}).
+			AddRow(categorias[0].ID, categorias[0].Nombre).
+			AddRow(categorias[1].ID, categorias[1].Nombre),
+	)
+	categoriasRecibidas, err := repository.GetAll()
+
+	assert.NoError(t, err)
+	assert.Equal(t, categorias, categoriasRecibidas)
+}
+
+func TestGetAllInternalServerError(t *testing.T) {
+	inicialize()
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
+
+	categoriasRecibidas, err := repository.GetAll()
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.Empty(t, categoriasRecibidas)
 }
 
 func inicialize() {

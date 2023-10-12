@@ -40,7 +40,7 @@ func TestGetBycodeOK(t *testing.T) {
 	assert.Equal(t, carrito, carritoRecibido)
 }
 
-func TestByCodeErrorNotFound(t *testing.T) {
+func TestGetByCodeErrorNotFound(t *testing.T) {
 	inicialize()
 	mockDB.ExpectQuery(QuerySelectByID).WithArgs(mockCarritoID).WillReturnError(gorm.ErrRecordNotFound)
 
@@ -53,7 +53,7 @@ func TestByCodeErrorNotFound(t *testing.T) {
 	assert.Empty(t, carritoRecibido)
 }
 
-func TestByCodeInternalServerError(t *testing.T) {
+func TestGetByCodeInternalServerError(t *testing.T) {
 	inicialize()
 	mockDB.ExpectQuery(QuerySelectByID).WithArgs(mockCarritoID).WillReturnError(gorm.ErrInvalidData)
 
