@@ -46,54 +46,62 @@ func TestOk(t *testing.T) {
 		PrecioTotal: 100,
 		Descuento:   5,
 		Envio:       5,
-		DulcesList: []query.DetalleDulce{
+		DulcesList: []query.DulceInCarrito{
 			{
-				ID:           mockDulceID1,
-				Nombre:       "Chocolatina",
-				Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
-				Imagen:       "imagen",
-				Disponibles:  100,
-				PrecioUnidad: 1000,
-				Peso:         40,
-				Codigo:       "2",
-				Presentacion: entities.Presentacion{
-					ID:     1,
-					Nombre: "Empaque",
-				},
-				Marca: entities.Marca{
-					ID:     2,
-					Nombre: "Jet",
-				},
-				Categorias: []entities.Categoria{
-					{
+				DetalleDulce: query.DetalleDulce{
+					ID:           mockDulceID1,
+					Nombre:       "Chocolatina",
+					Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
+					Imagen:       "imagen",
+					Disponibles:  100,
+					PrecioUnidad: 1000,
+					Peso:         40,
+					Codigo:       "2",
+					Presentacion: entities.Presentacion{
+						ID:     1,
+						Nombre: "Empaque",
+					},
+					Marca: entities.Marca{
 						ID:     2,
-						Nombre: "Chocolates",
+						Nombre: "Jet",
+					},
+					Categorias: []entities.Categoria{
+						{
+							ID:     2,
+							Nombre: "Chocolates",
+						},
 					},
 				},
+				Unidades: 2,
+				Subtotal: 2000,
 			},
 			{
-				ID:           mockDulceID2,
-				Nombre:       "Gomitas",
-				Descripcion:  "Ositos de gomita con sabores explosivos",
-				Imagen:       "imagen",
-				Disponibles:  100,
-				PrecioUnidad: 1000,
-				Peso:         40,
-				Codigo:       "2",
-				Presentacion: entities.Presentacion{
-					ID:     1,
-					Nombre: "Paquete",
-				},
-				Marca: entities.Marca{
-					ID:     2,
-					Nombre: "Trululú",
-				},
-				Categorias: []entities.Categoria{
-					{
+				DetalleDulce: query.DetalleDulce{
+					ID:           mockDulceID2,
+					Nombre:       "Gomitas",
+					Descripcion:  "Ositos de gomita con sabores explosivos",
+					Imagen:       "imagen",
+					Disponibles:  100,
+					PrecioUnidad: 1000,
+					Peso:         40,
+					Codigo:       "2",
+					Presentacion: entities.Presentacion{
 						ID:     1,
-						Nombre: "Gomitas",
+						Nombre: "Paquete",
+					},
+					Marca: entities.Marca{
+						ID:     2,
+						Nombre: "Trululú",
+					},
+					Categorias: []entities.Categoria{
+						{
+							ID:     1,
+							Nombre: "Gomitas",
+						},
 					},
 				},
+				Unidades: 1,
+				Subtotal: 1000,
 			},
 		},
 	}

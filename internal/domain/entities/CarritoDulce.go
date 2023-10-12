@@ -5,7 +5,7 @@ type CarritoDulce struct {
 	CarritoID uint64
 	DulceID   uint64
 	Unidades  int
-	SubTotal  float64
+	Subtotal  float64
 }
 
 func (CarritoDulce) TableName() string {

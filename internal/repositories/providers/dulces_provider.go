@@ -4,11 +4,12 @@ package providers
 
 import (
 	"Mileyman-API/internal/domain/dto/query"
+	"Mileyman-API/internal/domain/entities"
 )
 
 // la interface es un contrato
 type DulcesProvider interface {
 	GetByCode(codigo string) (dulce query.DetalleDulce, err error)
 	GetDetailByID(id uint64) (dulce query.DetalleDulce, err error)
-	GetDulcesListByCarritoID(carrito_id uint64) ([]uint64, error)
+	GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error)
 }

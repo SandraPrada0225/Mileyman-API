@@ -7,7 +7,6 @@ type DetalleDulce struct {
 	Peso             int                   `json:"peso"`
 	PrecioUnidad     int                   `json:"precio_unidad"`
 	Disponibles      int                   `json:"disponibles"`
-	Subtotal         int                   `json:"subtotal"`
 	Codigo           string                `json:"codigo"`
 	Nombre           string                `json:"nombre"`
 	Descripcion      string                `json:"descripcion"`
