@@ -35,14 +35,14 @@ func (mock *MockDulceProvider) GetDetailByID(id uint64) (query.DetalleDulce, err
 	return query.DetalleDulce{}, err
 }
 
-func (mock *MockDulceProvider) GetDulcesListByCarritoID(carrito_id uint64) ([]uint64, error) {
+func (mock *MockDulceProvider) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) {
 	args := mock.Called(carrito_id)
 	response := args.Get(0)
 	err := args.Error(1)
 	if response != nil {
-		return response.([]uint64), err
+		return response.([]entities.CarritoDulce), err
 	}
-	return []uint64{}, err
+	return []entities.CarritoDulce{}, err
 }
 
 func (mock *MockDulceProvider) GetByID(id uint64) (entities.Dulce, error){
