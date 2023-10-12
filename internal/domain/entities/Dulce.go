@@ -8,7 +8,7 @@ type Dulce struct {
 	ID               uint64
 	Nombre           string
 	MarcaID          uint64
-	Precio           float64
+	PrecioUnidad     float64
 	Peso             float64
 	Unidades         int
 	PresentacionID   uint64

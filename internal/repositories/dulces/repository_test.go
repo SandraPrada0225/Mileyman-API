@@ -3,6 +3,7 @@ package dulces
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	dbmocks "Mileyman-API/internal/app/config/database/mocks"
 	"Mileyman-API/internal/domain/dto/query"
@@ -24,6 +25,7 @@ const (
 	MockDulceID       = uint64(132423)
 	QuerySelectByCode = "Call GetDetalleDulceByCode(?)"
 	QuerySelectByID   = "Call GetDetalleDulceByID(?)"
+	QueryGetByID = "SELECT * FROM `dulces` WHERE id = ? LIMIT 1"
 )
 
 func TestGetBycodeOK(t *testing.T) {
@@ -110,6 +112,25 @@ func TestGetDetailByIDInternalServerError(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
+func TestGetByIDOK(t *testing.T) {
+	inicialize()
+
+	dulce := GetMockDulce()
+
+	mockDB.ExpectQuery(QueryGetByID).WithArgs(dulce.ID).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "nombre", "marca_id", "precio_unidad", "peso", "unidades", "presentacion_id", "descripcion",
+		 "imagen", "fecha_vencimiento", "fecha_expedicion", "disponibles", "codigo"}).AddRow(
+			dulce.ID, dulce.Nombre, dulce.MarcaID, dulce.PrecioUnidad, dulce.Peso, dulce.Unidades, dulce.PresentacionID, dulce.Descripcion, 
+			dulce.Imagen, dulce.FechaVencimiento, dulce.FechaExpedicion, dulce.Disponibles, dulce.Codigo,
+		),
+	)
+	dulceRecibido, err := repository.GetByID(dulce.ID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, dulce, dulceRecibido)
+}
+
+
 func inicialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
@@ -136,6 +157,24 @@ func GetResponse() (response query.DetalleDulce) {
 			Nombre: "Jet",
 		},
 		Codigo: "2",
+	}
+	return
+}
+
+func GetMockDulce() (dulce entities.Dulce) {
+	dulce = entities.Dulce{
+		ID: 1,
+		Nombre: "Gomas Clasicas",
+		MarcaID: 6,
+		PrecioUnidad: 2950.000,
+		Peso: 80,
+		Unidades: 5,
+		PresentacionID: 4,
+		Descripcion: "Gomas clasicas con sobores surtidos",
+		FechaVencimiento: time.Date(2023, time.August, 24, 0, 0, 0, 0, time.Local),
+		FechaExpedicion: time.Date(2023, time.July, 24, 0, 0, 0, 0, time.Local),
+		Disponibles: 100,
+		Codigo: "1A",
 	}
 	return
 }

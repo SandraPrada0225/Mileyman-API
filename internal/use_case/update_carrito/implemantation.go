@@ -67,7 +67,7 @@ func (UseCase Implementation) save(movement updatecarrito.Movement, carritoDulce
 		return business.NewUnitLimitExceded(errormessages.UnitLimitExceded.String())
 	}
 
-	carritoDulce = entities.UpdateCarritoDulce(carritoDulce, movement.Unidades, dulce.Precio)
+	carritoDulce = entities.UpdateCarritoDulce(carritoDulce, movement.Unidades, dulce.PrecioUnidad)
 
 	err = UseCase.CarritosProvider.AddDulceInCarrito(carritoDulce)
 	return err
