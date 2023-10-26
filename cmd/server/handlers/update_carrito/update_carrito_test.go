@@ -70,6 +70,9 @@ func TestOkUpdateCarrito(t *testing.T) {
 	}
 
 	movementsResultjson, err := json.Marshal(&movementsResult)
+	if(err != nil){
+		panic(err.Error())
+	}
 	mockUpdateCarrito.On("Execute", mockCarritoID, GetMockMovements()).Return(movementsResult, nil)
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
