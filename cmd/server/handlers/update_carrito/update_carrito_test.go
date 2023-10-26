@@ -64,9 +64,12 @@ func TestOkUpdateCarrito(t *testing.T) {
 	}
 
 	var body bytes.Buffer
-	json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	if(err != nil){
+		panic(err.Error())
+	}
 
-	movementsResultjson, _ := json.Marshal(&movementsResult)
+	movementsResultjson, err := json.Marshal(&movementsResult)
 	mockUpdateCarrito.On("Execute", mockCarritoID, GetMockMovements()).Return(movementsResult, nil)
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
@@ -86,8 +89,10 @@ func TestWhenNotFoundShouldReturn404(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	json.NewEncoder(&body).Encode(GetMockMovements())
-
+	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	if(err != nil){
+		panic(err.Error())
+	}
 	mockUpdateCarrito.On("Execute", mockCarritoID2, GetMockMovements()).Return(query.MovementsResult{}, database.NewNotFoundError(""))
 	request := httptest.NewRequest("PUT", "/api/carritos/6", &body)
 	request.Header.Add("Content-type", "application/json")
@@ -103,7 +108,10 @@ func TestWhenInternalServerErrorShouldReturn500(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	if(err != nil){
+		panic(err.Error())
+	}
 	mockUpdateCarrito.On("Execute", mockCarritoID, GetMockMovements()).Return(query.MovementsResult{}, database.NewInternalServerError(""))
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
@@ -119,7 +127,10 @@ func TestWhenInternalServerErrorShouldReturn400(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	if(err != nil){
+		panic(err.Error())
+	}
 	request := httptest.NewRequest("PUT", "/api/carritos/s", &body)
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
@@ -133,7 +144,10 @@ func TestWhenUnprocessableEntityShouldReturn422(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	json.NewEncoder(&body).Encode("StatusUnprocessableEntity")
+	err :=json.NewEncoder(&body).Encode("StatusUnprocessableEntity")
+	if(err != nil){
+		panic(err.Error())
+	}
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()

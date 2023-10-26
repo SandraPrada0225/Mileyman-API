@@ -36,7 +36,6 @@ func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.
 				movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
 				continue
 			}
-			break
 		case !exists:
 			operationResult = constants.Created
 			carritoDulce = entities.NewCarritoDulce(carritoID, movement.DulceID)
@@ -46,7 +45,6 @@ func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.
 				movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
 				continue
 			}
-			break
 		case exists:
 			operationResult = constants.Updated
 			err := UseCase.save(movement, carritoDulce)
@@ -54,7 +52,6 @@ func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.
 				movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
 				continue
 			}
-			break
 		}
 		movementsResult.AddResult(index, movement.DulceID, operationResult.String(), "")
 	}
