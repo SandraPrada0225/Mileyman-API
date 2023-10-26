@@ -20,7 +20,7 @@ func (mock *MockCarritoProvider) GetCarritoByCarritoID(carritoID uint64) (entiti
 	return response.(entities.Carrito), nil
 }
 
-func (mock *MockCarritoProvider) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint64) (carritoDulce entities.CarritoDulce, exists bool, err error){
+func (mock *MockCarritoProvider) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint64) (carritoDulce entities.CarritoDulce, exists bool, err error) {
 	args := mock.Called(carritoID, dulceID)
 	response1 := args.Get(0)
 	response2 := args.Bool(1)
@@ -31,21 +31,20 @@ func (mock *MockCarritoProvider) GetDulceByCarritoIDAndDulceID(carritoID uint64,
 	return response1.(entities.CarritoDulce), response2, nil
 }
 
-func (mock *MockCarritoProvider) AddDulceInCarrito(carritoDulce entities.CarritoDulce) (err error){
+func (mock *MockCarritoProvider) AddDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	args := mock.Called(carritoDulce)
 	err = args.Error(0)
 	if err != nil {
 		return err
 	}
-	return  nil
-
+	return nil
 }
 
-func (mock *MockCarritoProvider) DeleteDulceInCarrito(carritoDulce entities.CarritoDulce) (err error){
+func (mock *MockCarritoProvider) DeleteDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	args := mock.Called(carritoDulce)
 	err = args.Error(0)
 	if err != nil {
 		return err
 	}
-	return  nil
+	return nil
 }

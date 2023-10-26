@@ -63,21 +63,25 @@
 				
 				<option value="file3">Mileyman-API/cmd/server/handlers/ping/ping.go (100.0%)</option>
 				
-				<option value="file4">Mileyman-API/internal/repositories/carritos/repository.go (100.0%)</option>
+				<option value="file4">Mileyman-API/cmd/server/handlers/update_carrito/update_carrito.go (100.0%)</option>
 				
-				<option value="file5">Mileyman-API/internal/repositories/categorias/repository.go (50.0%)</option>
+				<option value="file5">Mileyman-API/internal/repositories/carritos/repository.go (100.0%)</option>
 				
-				<option value="file6">Mileyman-API/internal/repositories/dulces/repository.go (51.9%)</option>
+				<option value="file6">Mileyman-API/internal/repositories/categorias/repository.go (100.0%)</option>
 				
-				<option value="file7">Mileyman-API/internal/repositories/marcas/respository.go (100.0%)</option>
+				<option value="file7">Mileyman-API/internal/repositories/dulces/repository.go (100.0%)</option>
 				
-				<option value="file8">Mileyman-API/internal/repositories/presentaciones/repository.go (100.0%)</option>
+				<option value="file8">Mileyman-API/internal/repositories/marcas/respository.go (100.0%)</option>
 				
-				<option value="file9">Mileyman-API/internal/use_case/get_carrito_by_id/implementation.go (100.0%)</option>
+				<option value="file9">Mileyman-API/internal/repositories/presentaciones/repository.go (100.0%)</option>
 				
-				<option value="file10">Mileyman-API/internal/use_case/get_dulce_by_code/implementation.go (100.0%)</option>
+				<option value="file10">Mileyman-API/internal/use_case/get_carrito_by_id/implementation.go (100.0%)</option>
 				
-				<option value="file11">Mileyman-API/internal/use_case/get_filtros/implementation.go (100.0%)</option>
+				<option value="file11">Mileyman-API/internal/use_case/get_dulce_by_code/implementation.go (100.0%)</option>
+				
+				<option value="file12">Mileyman-API/internal/use_case/get_filtros/implementation.go (100.0%)</option>
+				
+				<option value="file13">Mileyman-API/internal/use_case/update_carrito/implementation.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -230,7 +234,61 @@ func (handler Ping) Handle() gin.HandlerFunc <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package carritos
+		<pre class="file" id="file4" style="display: none">package updatecarrito
+
+import (
+        updatecarrito "Mileyman-API/internal/domain/dto/command/update_carrito"
+        "Mileyman-API/internal/domain/dto/query"
+        "Mileyman-API/internal/domain/errors/database"
+        errormessages "Mileyman-API/internal/domain/errors/error_messages"
+        "net/http"
+        "strconv"
+
+        "github.com/gin-gonic/gin"
+)
+
+type UpdateCarrito struct {
+        UseCase UpdateCarritoUseCase
+}
+
+type UpdateCarritoUseCase interface {
+        Execute(carritoID uint64, movements updatecarrito.Body) (query.MovementsResult, error)
+}
+
+func (handler UpdateCarrito) Handle() gin.HandlerFunc <span class="cov10" title="5">{
+        return func(c *gin.Context) </span><span class="cov10" title="5">{
+                id, err :=strconv.ParseUint(c.Param("id"), 10, 64)
+                if err != nil </span><span class="cov1" title="1">{
+                        c.JSON(http.StatusBadRequest, errormessages.IdMustBeAPositiveNumber.String())
+                        return
+                }</span>
+
+                <span class="cov8" title="4">var command updatecarrito.Body
+                
+                err = c.ShouldBindJSON(&amp;command)
+                if err != nil </span><span class="cov1" title="1">{
+                        c.JSON(http.StatusUnprocessableEntity, err.Error())
+                        return
+                }</span>
+
+                <span class="cov7" title="3">query, err := handler.UseCase.Execute(id, command)
+                if err != nil </span><span class="cov4" title="2">{
+                        switch err.(type) </span>{
+                        case database.NotFoundError:<span class="cov1" title="1">
+                                c.JSON(http.StatusNotFound, err.Error())</span>
+                        default:<span class="cov1" title="1">
+                                c.JSON(http.StatusInternalServerError, err.Error())</span>
+                        }
+                        <span class="cov4" title="2">return</span>
+                }
+
+                <span class="cov1" title="1">c.JSON(http.StatusOK, query)</span>
+        }
+
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package carritos
 
 import (
         "errors"
@@ -318,7 +376,7 @@ func (r Repository) DeleteDulceInCarrito(carritoDulce entities.CarritoDulce) (er
         <span class="cov8" title="4">return</span>
 }</pre>
 		
-		<pre class="file" id="file5" style="display: none">package categorias
+		<pre class="file" id="file6" style="display: none">package categorias
 
 import (
         "Mileyman-API/internal/domain/entities"
@@ -332,9 +390,9 @@ type Repository struct {
         DB *gorm.DB
 }
 
-func (r Repository) GetAll() (categorias []entities.Categoria, err error) <span class="cov0" title="0">{
+func (r Repository) GetAll() (categorias []entities.Categoria, err error) <span class="cov10" title="2">{
         err = r.DB.Find(&amp;categorias).Error
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 params := errormessages.Parameters{
                         "resource": "categorias",
                         "error":    err.Error(),
@@ -342,7 +400,7 @@ func (r Repository) GetAll() (categorias []entities.Categoria, err error) <span 
                 return []entities.Categoria{}, database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
         }</span>
 
-        <span class="cov0" title="0">return</span>
+        <span class="cov1" title="1">return</span>
 }
 
 const GetCategoriasByDulceIDSP = "Call GetCategoriasByDulceID(?)"
@@ -361,7 +419,7 @@ func (r Repository) GetCategoriasByDulceID(dulceID uint64) (categorias []entitie
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package dulces
+		<pre class="file" id="file7" style="display: none">package dulces
 
 import (
         "errors"
@@ -419,14 +477,14 @@ func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, e
         <span class="cov10" title="3">return</span>
 }
 
-func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) <span class="cov0" title="0">{
+func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) <span class="cov6" title="2">{
 
         var dulcesInCarrito []entities.CarritoDulce
 
         err := r.DB.Model(&amp;entities.CarritoDulce{}).
                 Where("carrito_id = ?", carrito_id).
                 Find(&amp;dulcesInCarrito).Error
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 params := errormessages.Parameters{
                         "resource":   "dulces",
                         "carrito_id": carrito_id,
@@ -436,27 +494,27 @@ func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.Carr
                 return []entities.CarritoDulce{}, database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
         }</span>
 
-        <span class="cov0" title="0">return dulcesInCarrito, nil</span>
+        <span class="cov1" title="1">return dulcesInCarrito, nil</span>
 }
 
-func (r Repository) GetByID(id uint64) (dulce entities.Dulce, err error) <span class="cov0" title="0">{
+func (r Repository) GetByID(id uint64) (dulce entities.Dulce, err error) <span class="cov10" title="3">{
         err = r.DB.Where("id = ?", id).Take(&amp;dulce).Error
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov6" title="2">{
                 params := errormessages.Parameters{
                         "resource": "dulce",
                 }
-                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov1" title="1">{
                         err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
-                }</span> else<span class="cov0" title="0"> {
+                }</span> else<span class="cov1" title="1"> {
                         err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
                 }</span>
         }
-        <span class="cov0" title="0">return</span>
+        <span class="cov10" title="3">return</span>
 
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package marcas
+		<pre class="file" id="file8" style="display: none">package marcas
 
 import (
         "Mileyman-API/internal/domain/entities"
@@ -483,7 +541,7 @@ func (r Repository) GetAll() (marcas []entities.Marca, err error) <span class="c
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package presentaciones
+		<pre class="file" id="file9" style="display: none">package presentaciones
 
 import (
         "Mileyman-API/internal/domain/entities"
@@ -509,7 +567,7 @@ func (r Repository) GetAll() (presentaciones []entities.Presentacion, err error)
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package getcarritobyid
+		<pre class="file" id="file10" style="display: none">package getcarritobyid
 
 import (
         "Mileyman-API/internal/domain/dto/query"
@@ -556,7 +614,7 @@ func (useCase Implementation) Execute(id uint64) (query.GetDetalleCarrito, error
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package getdulcebycode
+		<pre class="file" id="file11" style="display: none">package getdulcebycode
 
 import (
         "Mileyman-API/internal/domain/dto/query"
@@ -584,7 +642,7 @@ func (UseCase Implementation) Execute(codigo string) (query.DetalleDulce, error)
 }
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package getfiltros
+		<pre class="file" id="file12" style="display: none">package getfiltros
 
 import (
         "Mileyman-API/internal/domain/dto/query"
@@ -616,6 +674,86 @@ func (UseCase Implementation) Execute() (query.GetFiltros, error) <span class="c
                 Presentaciones: presentaciones,
                 Categorias:     categorias,
         }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package updatecarrito
+
+import (
+        "Mileyman-API/internal/domain/constants"
+        updatecarrito "Mileyman-API/internal/domain/dto/command/update_carrito"
+        "Mileyman-API/internal/domain/dto/query"
+        "Mileyman-API/internal/domain/entities"
+        "Mileyman-API/internal/domain/errors/business"
+        errormessages "Mileyman-API/internal/domain/errors/error_messages"
+        "Mileyman-API/internal/repositories/providers"
+)
+
+type Implementation struct {
+        CarritosProvider providers.CarritosProvider
+        DulcesProvider   providers.DulcesProvider
+}
+
+func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.Body) (query.MovementsResult, error) <span class="cov9" title="8">{
+        _, err := UseCase.CarritosProvider.GetCarritoByCarritoID(carritoID)
+        if err != nil </span><span class="cov3" title="2">{
+                return query.MovementsResult{}, err
+        }</span>
+        <span class="cov8" title="6">movementsResult := query.NewMovementsResult()
+        for index, movement := range movements.Movements </span><span class="cov10" title="10">{
+                var operationResult constants.CarritoOperationResult
+                carritoDulce, exists, err := UseCase.CarritosProvider.GetDulceByCarritoIDAndDulceID(carritoID, movement.DulceID)
+                if err != nil </span><span class="cov1" title="1">{
+                        movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
+                        continue</span>
+                }
+                <span class="cov9" title="9">switch </span>{
+                case movement.Unidades == 0:<span class="cov5" title="3">
+                        operationResult = constants.Deleted
+                        err = UseCase.CarritosProvider.DeleteDulceInCarrito(carritoDulce)
+                        if err != nil </span><span class="cov1" title="1">{
+                                movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
+                                continue</span>
+                        }
+                        <span class="cov3" title="2">break</span>
+                case !exists:<span class="cov5" title="3">
+                        operationResult = constants.Created
+                        carritoDulce = entities.NewCarritoDulce(carritoID, movement.DulceID)
+
+                        err := UseCase.save(movement, carritoDulce)
+                        if err != nil </span><span class="cov1" title="1">{
+                                movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
+                                continue</span>
+                        }
+                        <span class="cov3" title="2">break</span>
+                case exists:<span class="cov5" title="3">
+                        operationResult = constants.Updated
+                        err := UseCase.save(movement, carritoDulce)
+                        if err != nil </span><span class="cov3" title="2">{
+                                movementsResult.AddResult(index, movement.DulceID, constants.Error.String(), err.Error())
+                                continue</span>
+                        }
+                        <span class="cov1" title="1">break</span>
+                }
+                <span class="cov7" title="5">movementsResult.AddResult(index, movement.DulceID, operationResult.String(), "")</span>
+        }
+        <span class="cov8" title="6">return movementsResult, err</span>
+}
+
+func (UseCase Implementation) save(movement updatecarrito.Movement, carritoDulce entities.CarritoDulce) error <span class="cov8" title="6">{
+        dulce, err := UseCase.DulcesProvider.GetByID(movement.DulceID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="5">if movement.Unidades &gt; dulce.Disponibles </span><span class="cov3" title="2">{
+                return business.NewUnitLimitExceded(errormessages.UnitLimitExceded.String())
+        }</span>
+
+        <span class="cov5" title="3">carritoDulce = entities.UpdateCarritoDulce(carritoDulce, movement.Unidades, dulce.PrecioUnidad)
+
+        err = UseCase.CarritosProvider.AddDulceInCarrito(carritoDulce)
+        return err</span>
 }
 </pre>
 		

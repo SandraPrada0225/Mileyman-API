@@ -35,6 +35,7 @@ func (r Repository) GetCarritoByCarritoID(carrito_id uint64) (entities.Carrito, 
 
 	return carrito, nil
 }
+
 // consultamos la existencia del dulce carrito_dulce
 func (r Repository) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint64) (carritoDulce entities.CarritoDulce, exists bool, err error) {
 	err = r.DB.Where("carrito_id = ? AND dulce_id = ?", carritoID, dulceID).First(&carritoDulce).Error
@@ -50,7 +51,7 @@ func (r Repository) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint
 		}
 		return
 	}
-	exists = true;
+	exists = true
 	return
 }
 

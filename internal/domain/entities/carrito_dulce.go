@@ -8,14 +8,14 @@ type CarritoDulce struct {
 	Subtotal  float64 `json:"subtotal"`
 }
 
-func NewCarritoDulce(carritoID uint64, dulceID uint64) CarritoDulce{
-	return  CarritoDulce{
+func NewCarritoDulce(carritoID uint64, dulceID uint64) CarritoDulce {
+	return CarritoDulce{
 		CarritoID: carritoID,
-		DulceID: dulceID,
-	} 
+		DulceID:   dulceID,
+	}
 }
 
-func UpdateCarritoDulce(carritoDulce CarritoDulce, unidades int, precio float64) CarritoDulce{
+func UpdateCarritoDulce(carritoDulce CarritoDulce, unidades int, precio float64) CarritoDulce {
 	carritoDulce.Unidades = unidades
 	carritoDulce.Subtotal = float64(unidades) * precio
 	return carritoDulce

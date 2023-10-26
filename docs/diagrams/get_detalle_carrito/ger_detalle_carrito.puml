@@ -51,7 +51,7 @@ Caller -> handler ++: GET api/carritos/{id}
            UseCase -> UseCase: dulcesList = append(dulcesList, query)
         end
 
-    UseCase -> handler -- : query.NewGetDetalleCarrito(carrito, dulcesList), ni 
+    UseCase -> handler -- : query.NewGetDetalleCarrito(carrito, dulcesList), nil
 
 handler -> Caller --: <200 OK, query>     
 

@@ -15,7 +15,11 @@ type Implementation struct {
 	DulcesProvider   providers.DulcesProvider
 }
 
-func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.Body) query.MovementsResult {
+func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.Body) (query.MovementsResult, error) {
+	_, err := UseCase.CarritosProvider.GetCarritoByCarritoID(carritoID)
+	if err != nil {
+		return query.MovementsResult{}, err
+	}
 	movementsResult := query.NewMovementsResult()
 	for index, movement := range movements.Movements {
 		var operationResult constants.CarritoOperationResult
@@ -54,7 +58,7 @@ func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.
 		}
 		movementsResult.AddResult(index, movement.DulceID, operationResult.String(), "")
 	}
-	return movementsResult
+	return movementsResult, err
 }
 
 func (UseCase Implementation) save(movement updatecarrito.Movement, carritoDulce entities.CarritoDulce) error {
@@ -63,7 +67,7 @@ func (UseCase Implementation) save(movement updatecarrito.Movement, carritoDulce
 		return err
 	}
 
-	if movement.Unidades > dulce.Unidades {
+	if movement.Unidades > dulce.Disponibles {
 		return business.NewUnitLimitExceded(errormessages.UnitLimitExceded.String())
 	}
 

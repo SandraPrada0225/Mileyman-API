@@ -13,8 +13,8 @@ const (
 	InternalServerError     ErrorMessage = "Ha ocurrido un error inesperado"
 	IdMustBeAPositiveNumber ErrorMessage = "el ID debe ser un número positivo"
 	UnitLimitExceded        ErrorMessage = "las unidades requeridad exceden las disponibles"
-	CarritoNotFound     ErrorMessage = "No se encontró un carrito con este id"
-	InvalidTypeError    ErrorMessage = "El tipo de dato es inválido"
+	CarritoNotFound         ErrorMessage = "No se encontró un carrito con este id"
+	InvalidTypeError        ErrorMessage = "El tipo de dato es inválido"
 )
 
 func (e ErrorMessage) String() string {
