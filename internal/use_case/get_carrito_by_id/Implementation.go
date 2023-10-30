@@ -12,7 +12,7 @@ type Implementation struct {
 }
 
 func (useCase Implementation) Execute(id uint64) (query.GetDetalleCarrito, error) {
-	carrito, err := useCase.CarritoProvider.GetCarritoByCarritoID(id)
+	carrito, err := useCase.CarritoProvider.GetByID(id)
 	if err != nil {
 		return query.GetDetalleCarrito{}, err
 	}

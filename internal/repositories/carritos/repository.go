@@ -15,7 +15,7 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func (r Repository) GetCarritoByCarritoID(carrito_id uint64) (entities.Carrito, error) {
+func (r Repository) GetByID(carrito_id uint64) (entities.Carrito, error) {
 	var carrito entities.Carrito
 
 	err := r.DB.Where("id = ?", carrito_id).Take(&carrito).Error
@@ -34,4 +34,13 @@ func (r Repository) GetCarritoByCarritoID(carrito_id uint64) (entities.Carrito, 
 	}
 
 	return carrito, nil
+}
+
+func (r Repository) Save(carrito *entities.Carrito) error {
+	err := r.DB.Save(carrito).Error
+	if err != nil {
+		err = database.NewInternalServerError(errormessages.InternalServerError.String())
+	}
+
+	return err
 }

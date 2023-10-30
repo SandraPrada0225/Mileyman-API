@@ -57,7 +57,6 @@ func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, e
 }
 
 func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) {
-
 	var dulcesInCarrito []entities.CarritoDulce
 
 	err := r.DB.Model(&entities.CarritoDulce{}).

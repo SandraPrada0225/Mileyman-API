@@ -31,7 +31,7 @@ func (handler GetDetalleCarritoById) Handle() gin.HandlerFunc {
 			return
 		}
 
-		dulce, err := handler.UseCase.Execute(id)
+		carrito, err := handler.UseCase.Execute(id)
 		if err != nil {
 			switch err.(type) {
 			case database.NotFoundError:
@@ -41,6 +41,6 @@ func (handler GetDetalleCarritoById) Handle() gin.HandlerFunc {
 			}
 			return
 		}
-		c.JSON(http.StatusOK, dulce)
+		c.JSON(http.StatusOK, carrito)
 	}
 }

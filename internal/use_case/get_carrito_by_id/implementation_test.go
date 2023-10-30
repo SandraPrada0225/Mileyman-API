@@ -27,7 +27,7 @@ const (
 func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesInCarritoList(), nil)
@@ -44,7 +44,7 @@ func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 2)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 2)
@@ -53,7 +53,7 @@ func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 func TestWhenCarritoWasNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(entities.Carrito{}, database.NewNotFoundError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID)
@@ -64,7 +64,7 @@ func TestWhenCarritoWasNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 
 	assert.Empty(t, queryResponse)
 	assert.Equal(t, "database.NotFoundError", typeErr)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 0)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
@@ -73,7 +73,7 @@ func TestWhenCarritoWasNotFoundThenShouldReturnNotFoundError(t *testing.T) {
 func TestWhenCarritoWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(entities.Carrito{}, database.NewInternalServerError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID)
@@ -84,7 +84,7 @@ func TestWhenCarritoWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 
 	assert.Empty(t, queryResponse)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 0)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
@@ -93,7 +93,7 @@ func TestWhenCarritoWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesInCarritoList(), database.NewInternalServerError("error"))
@@ -104,7 +104,7 @@ func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 
 	assert.Empty(t, queryResponse)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 0)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
@@ -113,7 +113,7 @@ func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesInCarritoList(), nil)
@@ -126,7 +126,7 @@ func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing
 
 	assert.Empty(t, queryResponse)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 1)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 0)
@@ -135,7 +135,7 @@ func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing
 func TestWhenGeCategoriasByDulceIDWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	useCase := getImplementation()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).
+	mockCarritosProvider.On("GetByID", mockCarritoID).
 		Return(getMockCarrito(), nil)
 	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).
 		Return(getMockDulcesInCarritoList(), nil)
@@ -150,7 +150,7 @@ func TestWhenGeCategoriasByDulceIDWentWrongThenShouldReturnInternalServerError(t
 
 	assert.Empty(t, queryResponse)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDulcesListByCarritoID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetDetailByID", 1)
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
@@ -170,7 +170,7 @@ func getImplementation() Implementation {
 func getMockCarrito() entities.Carrito {
 	return entities.Carrito{
 		ID:          mockCarritoID,
-		SubTotal:    5,
+		Subtotal:    5,
 		PrecioTotal: 100,
 		Descuento:   5,
 		Envio:       5,

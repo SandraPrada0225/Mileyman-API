@@ -5,14 +5,18 @@ import (
 	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/get_dulce_by_code"
 	getfiltroshandler "Mileyman-API/cmd/server/handlers/get_filtros"
 	"Mileyman-API/cmd/server/handlers/ping"
+	purchasecarritohandler "Mileyman-API/cmd/server/handlers/purchase_carrito"
 	"Mileyman-API/internal/repositories/carritos"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	"Mileyman-API/internal/repositories/marcas"
 	"Mileyman-API/internal/repositories/presentaciones"
+	"Mileyman-API/internal/repositories/usuarios"
+	"Mileyman-API/internal/repositories/ventas"
 	getcarritobyidusecase "Mileyman-API/internal/use_case/get_carrito_by_id"
 	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
 	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
+	purchasecarritousecase "Mileyman-API/internal/use_case/purchase_carrito"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -65,6 +69,14 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
+	ventasProvider := ventas.Repository{
+		DB: r.db,
+	}
+
+	usuariosProvider := usuarios.Repository{
+		DB: r.db,
+	}
+
 	// UseCase
 	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
 		DulcesProvider:     dulcesProvider,
@@ -83,6 +95,12 @@ func (r router) MapRoutes() {
 		CategoriasProvider: categoriasProvider,
 	}
 
+	purchaseCarritoUseCase := purchasecarritousecase.Implementation{
+		CarritosProvider: carritosProvider,
+		UsuariosProvider: usuariosProvider,
+		VentasProvider:   ventasProvider,
+	}
+
 	// Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
@@ -96,6 +114,10 @@ func (r router) MapRoutes() {
 		UseCase: getCarritoByIDUseCase,
 	}
 
+	purchaseCarritoHandler := purchasecarritohandler.PurchaseCarrito{
+		UseCase: purchaseCarritoUseCase,
+	}
+
 	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
@@ -105,4 +127,5 @@ func (r router) MapRoutes() {
 
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
+	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
 }

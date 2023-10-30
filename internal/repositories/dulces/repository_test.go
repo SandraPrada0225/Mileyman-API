@@ -88,19 +88,6 @@ func TestGetDetailByIDOK(t *testing.T) {
 	assert.Equal(t, dulce, dulceRecibido)
 }
 
-func TestGetDetailByIDErrorNotFound(t *testing.T) {
-	inicialize()
-	mockDB.ExpectQuery(QuerySelectByID).WithArgs().WillReturnError(gorm.ErrRecordNotFound)
-
-	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
-
-	typeErr := reflect.TypeOf(err).String()
-
-	assert.Error(t, err)
-	assert.Equal(t, "database.NotFoundError", typeErr)
-	assert.Empty(t, dulceRecibido)
-}
-
 func TestGetDetailByIDInternalServerError(t *testing.T) {
 	inicialize()
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(MockDulceID).WillReturnError(gorm.ErrInvalidData)
@@ -111,6 +98,19 @@ func TestGetDetailByIDInternalServerError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.Empty(t, dulceRecibido)
+}
+
+func TestGetDetailByIDErrorNotFound(t *testing.T) {
+	inicialize()
+	mockDB.ExpectQuery(QuerySelectByID).WithArgs(MockDulceID).WillReturnError(gorm.ErrRecordNotFound)
+
+	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.NotFoundError", typeErr)
 	assert.Empty(t, dulceRecibido)
 }
 
@@ -142,6 +142,25 @@ func TestGetDulcesListByCarritoIDWhenSomethingWentWrongShouldReturnInternalError
 	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
+func getMockDulcesInCarritoList() []entities.CarritoDulce {
+	return []entities.CarritoDulce{
+		{
+			ID:        1,
+			DulceID:   1,
+			CarritoID: 1,
+			Unidades:  2,
+			Subtotal:  2000,
+		},
+		{
+			ID:        2,
+			DulceID:   2,
+			CarritoID: 1,
+			Unidades:  1,
+			Subtotal:  1000,
+		},
+	}
+}
+
 func inicialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
@@ -170,23 +189,4 @@ func GetResponse() (response query.DetalleDulce) {
 		Codigo: "2",
 	}
 	return
-}
-
-func getMockDulcesInCarritoList() []entities.CarritoDulce {
-	return []entities.CarritoDulce{
-		{
-			ID:        1,
-			DulceID:   1,
-			CarritoID: 1,
-			Unidades:  2,
-			Subtotal:  2000,
-		},
-		{
-			ID:        2,
-			DulceID:   2,
-			CarritoID: 1,
-			Unidades:  1,
-			Subtotal:  1000,
-		},
-	}
 }

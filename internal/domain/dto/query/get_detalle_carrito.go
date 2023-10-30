@@ -14,7 +14,7 @@ type GetDetalleCarrito struct {
 func NewGetDetalleCarrito(carrito entities.Carrito, dulcesList []DulceInCarrito) GetDetalleCarrito {
 	return GetDetalleCarrito{
 		ID:          carrito.ID,
-		SubTotal:    carrito.SubTotal,
+		SubTotal:    carrito.Subtotal,
 		Descuento:   carrito.Descuento,
 		Envio:       carrito.Envio,
 		PrecioTotal: carrito.PrecioTotal,
