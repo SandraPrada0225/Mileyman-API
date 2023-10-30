@@ -64,7 +64,7 @@ func TestOkUpdateCarrito(t *testing.T) {
 	}
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(getMockMovements())
 	if(err != nil){
 		panic(err.Error())
 	}
@@ -73,7 +73,7 @@ func TestOkUpdateCarrito(t *testing.T) {
 	if(err != nil){
 		panic(err.Error())
 	}
-	mockUpdateCarrito.On("Execute", mockCarritoID, GetMockMovements()).Return(movementsResult, nil)
+	mockUpdateCarrito.On("Execute", mockCarritoID, getMockMovements()).Return(movementsResult, nil)
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
@@ -92,11 +92,11 @@ func TestWhenNotFoundShouldReturn404(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(getMockMovements())
 	if(err != nil){
 		panic(err.Error())
 	}
-	mockUpdateCarrito.On("Execute", mockCarritoID2, GetMockMovements()).Return(query.MovementsResult{}, database.NewNotFoundError(""))
+	mockUpdateCarrito.On("Execute", mockCarritoID2, getMockMovements()).Return(query.MovementsResult{}, database.NewNotFoundError(""))
 	request := httptest.NewRequest("PUT", "/api/carritos/6", &body)
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
@@ -111,11 +111,11 @@ func TestWhenInternalServerErrorShouldReturn500(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(getMockMovements())
 	if(err != nil){
 		panic(err.Error())
 	}
-	mockUpdateCarrito.On("Execute", mockCarritoID, GetMockMovements()).Return(query.MovementsResult{}, database.NewInternalServerError(""))
+	mockUpdateCarrito.On("Execute", mockCarritoID, getMockMovements()).Return(query.MovementsResult{}, database.NewInternalServerError(""))
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)
 	request.Header.Add("Content-type", "application/json")
 	response := httptest.NewRecorder()
@@ -130,7 +130,7 @@ func TestWhenInternalServerErrorShouldReturn400(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(GetMockMovements())
+	err :=json.NewEncoder(&body).Encode(getMockMovements())
 	if(err != nil){
 		panic(err.Error())
 	}
@@ -143,7 +143,7 @@ func TestWhenInternalServerErrorShouldReturn400(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, response.Code)
 }
 
-func TestWhenUnprocessableEntityShouldReturn422(t *testing.T) {
+func TestWhenShouldBindJSONFailedShouldReturn400(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
@@ -157,10 +157,10 @@ func TestWhenUnprocessableEntityShouldReturn422(t *testing.T) {
 
 	r.ServeHTTP(response, request)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	assert.Equal(t, http.StatusBadRequest, response.Code)
 }
 
-func GetMockMovements() (movements updatecarrito.Body) {
+func getMockMovements() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{

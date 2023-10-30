@@ -5,6 +5,6 @@ type Body struct {
 }
 
 type Movement struct {
-	DulceID  uint64 `json:"dulce_id"`
-	Unidades int    `json:"unidades"`
+	DulceID  uint64 `json:"dulce_id" validate:"required,number" `
+	Unidades int    `json:"unidades" validate:"required,number"`
 }

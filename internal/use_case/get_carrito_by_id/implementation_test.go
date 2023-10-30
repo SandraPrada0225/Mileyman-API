@@ -156,7 +156,7 @@ func TestWhenGeCategoriasByDulceIDWentWrongThenShouldReturnInternalServerError(t
 	mockCategoriasProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
 }
 
-func getImplementation() Implementation { // por qué getImplementation y no Initialice
+func getImplementation() Implementation { 
 	mockCarritosProvider = new(mocks.MockCarritoProvider)
 	mockCategoriasProvider = new(mocks.MockCategoriaProvider)
 	mockDulcesProvider = new(mocks.MockDulceProvider)

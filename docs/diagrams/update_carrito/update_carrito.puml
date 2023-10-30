@@ -35,6 +35,7 @@ Caller -> handler++ : PUT /api/carritos/{id}
                 carritosp -> UseCase --: <err>;
                 alt err != nil
                     UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
                 end
             end
             alt !exists
@@ -48,6 +49,7 @@ Caller -> handler++ : PUT /api/carritos/{id}
                 UseCase -> UseCase --: <err>;
                 alt err != nil
                     UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
                 end
             end
             alt exists
@@ -59,9 +61,11 @@ Caller -> handler++ : PUT /api/carritos/{id}
                 UseCase -> UseCase --: <err>;
                 alt err != nil
                     UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
                 end
             end
             UseCase -> Query ++: query.AddResult(index, dulceID, operationResult, "")
+            Query -> UseCase --: query
         end
     UseCase -> handler -- : query.NewMovementsResult(), nil
 handler -> Caller-- : <200, updateCarrito>

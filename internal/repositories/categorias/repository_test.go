@@ -26,7 +26,7 @@ const (
 func TestGetBycodeOK(t *testing.T) {
 	initialize()
 
-	mockCategorias := GetMockCategorias()
+	mockCategorias := getMockCategorias()
 
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
@@ -55,7 +55,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 func TestGetAllOK(t *testing.T) {
 	initialize()
 
-	categorias := GetMockCategorias()
+	categorias := getMockCategorias()
 
 	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
@@ -89,7 +89,7 @@ func initialize() {
 	}
 }
 
-func GetMockCategorias() (categorias []entities.Categoria) {
+func getMockCategorias() (categorias []entities.Categoria) {
 	categorias = []entities.Categoria{
 		{
 			ID:     1,

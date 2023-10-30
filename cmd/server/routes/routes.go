@@ -14,7 +14,7 @@ import (
 	getcarritobyidusecase "Mileyman-API/internal/use_case/get_carrito_by_id"
 	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
 	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
-	updatecarrito "Mileyman-API/internal/use_case/update_carrito"
+	updatecarritousecase "Mileyman-API/internal/use_case/update_carrito"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -27,9 +27,9 @@ type Router interface {
 }
 
 type router struct {
-	eng *gin.Engine      // crea
-	rg  *gin.RouterGroup // exponer los handlers en la url//guarda
-	db  *gorm.DB         // inyectar la base de datos
+	eng *gin.Engine     
+	rg  *gin.RouterGroup 
+	db  *gorm.DB         
 }
 
 func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
@@ -42,11 +42,11 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	// pingHandler
+	
 	pingHandler := ping.Ping{}
 	r.rg.GET("/ping", pingHandler.Handle())
 
-	// providers
+	
 	dulcesProvider := dulces.Repository{
 		DB: r.db,
 	}
@@ -67,7 +67,6 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
-	// UseCase
 	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
 		DulcesProvider:     dulcesProvider,
 		CategoriasProvider: categoriasProvider,
@@ -79,7 +78,7 @@ func (r router) MapRoutes() {
 		PresentacionesProvider: presentacionProvider,
 	}
 
-	updatecarrito := updatecarrito.Implementation{
+	updatecarrito := updatecarritousecase.Implementation{
 		CarritosProvider: carritosProvider,
 		DulcesProvider:   dulcesProvider,
 	}
@@ -90,7 +89,6 @@ func (r router) MapRoutes() {
 		CategoriasProvider: categoriasProvider,
 	}
 
-	// Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
 	}
@@ -107,7 +105,7 @@ func (r router) MapRoutes() {
 		UseCase: updatecarrito,
 	}
 
-	// endPoint
+
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
 

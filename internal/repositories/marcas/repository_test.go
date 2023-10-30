@@ -25,7 +25,7 @@ const (
 func TestGetAllOK(t *testing.T) {
 	initialize()
 
-	marcas := GetMarcas()
+	marcas := getMarcas()
 
 	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
@@ -59,7 +59,7 @@ func initialize() {
 	}
 }
 
-func GetMarcas() (marcas []entities.Marca) {
+func getMarcas() (marcas []entities.Marca) {
 	marcas = []entities.Marca{
 		{
 			ID:     1,

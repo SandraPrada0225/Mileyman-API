@@ -31,7 +31,7 @@ const (
 func TestGetBycodeOK(t *testing.T) {
 	initialize()
 
-	carrito := GetResponse()
+	carrito := getResponse()
 
 	mockDB.ExpectQuery(QuerySelectByID).WithArgs(carrito.ID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "precio_total", "descuento", "sub_total", "envio"}).AddRow(
@@ -42,6 +42,7 @@ func TestGetBycodeOK(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, carrito, carritoRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestByCodeErrorNotFound(t *testing.T) {
@@ -55,6 +56,7 @@ func TestByCodeErrorNotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
 	assert.Empty(t, carritoRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
@@ -68,6 +70,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	assert.Empty(t, dulceRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func initialize() {
@@ -81,7 +84,7 @@ func initialize() {
 func TestGetDulceByCarritoIDAndDulceIDOK(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectQuery(QueryGetDulceByCarritoIDAndDulceID).WithArgs(carritoDulce.CarritoID, carritoDulce.DulceID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "carrito_id", "dulce_id", "unidades", "subtotal"}).AddRow(
@@ -93,6 +96,7 @@ func TestGetDulceByCarritoIDAndDulceIDOK(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, exist)
 	assert.Equal(t, carritoDulce, carritoDulceRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestGetDulceByCarritoIDAndDulceIDWhenCartDoesNotExistReturnsFalse(t *testing.T) {
@@ -104,14 +108,13 @@ func TestGetDulceByCarritoIDAndDulceIDWhenCartDoesNotExistReturnsFalse(t *testin
 	assert.NoError(t, err)
 	assert.False(t, exist)
 	assert.Empty(t, carritoDulceRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestGetDulceByCarritoIDAndDulceIDInternalServerError(t *testing.T) {
 	initialize()
 
-	mockDB.ExpectBegin()
 	mockDB.ExpectQuery(QueryGetDulceByCarritoIDAndDulceID).WithArgs(2, 2).WillReturnError(gorm.ErrInvalidData)
-	mockDB.ExpectRollback()
 
 	carritoDulceRecibido, exist, err := repository.GetDulceByCarritoIDAndDulceID(2, 2)
 	typeErr := reflect.TypeOf(err).String()
@@ -120,12 +123,13 @@ func TestGetDulceByCarritoIDAndDulceIDInternalServerError(t *testing.T) {
 	assert.False(t, exist)
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	assert.Empty(t, carritoDulceRecibido)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestUpdateDulceInCarritoOK(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryUpdateDulceInCarrito).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -134,12 +138,13 @@ func TestUpdateDulceInCarritoOK(t *testing.T) {
 	err := repository.AddDulceInCarrito(carritoDulce)
 
 	assert.NoError(t, err)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestUpdateDulceInCarritoNotFoundError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryUpdateDulceInCarrito).WillReturnError(gorm.ErrRecordNotFound)
@@ -150,12 +155,13 @@ func TestUpdateDulceInCarritoNotFoundError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestUpdateDulceInCarritoInternalServerError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryUpdateDulceInCarrito).WillReturnError(gorm.ErrInvalidData)
@@ -171,7 +177,7 @@ func TestUpdateDulceInCarritoInternalServerError(t *testing.T) {
 func TestAddDulceInCarritoOK(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulceSinID()
+	carritoDulce := getMockCarritoDulceSinID()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryAddDulceInCarrito).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -180,12 +186,13 @@ func TestAddDulceInCarritoOK(t *testing.T) {
 	err := repository.AddDulceInCarrito(carritoDulce)
 
 	assert.NoError(t, err)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestAddDulceInCarritoNotFoundError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulceSinID()
+	carritoDulce := getMockCarritoDulceSinID()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryAddDulceInCarrito).WillReturnError(gorm.ErrRecordNotFound)
@@ -196,12 +203,13 @@ func TestAddDulceInCarritoNotFoundError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestAddDulceInCarritoInternalServerError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulceSinID()
+	carritoDulce := getMockCarritoDulceSinID()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryAddDulceInCarrito).WillReturnError(gorm.ErrInvalidData)
@@ -212,12 +220,13 @@ func TestAddDulceInCarritoInternalServerError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestDeleteDulceInCarritoOK(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryDeleteDulceInCarrito).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -226,12 +235,13 @@ func TestDeleteDulceInCarritoOK(t *testing.T) {
 	err := repository.DeleteDulceInCarrito(carritoDulce)
 
 	assert.NoError(t, err)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestDeleteDulceInCarritoNotFoundError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryDeleteDulceInCarrito).WillReturnError(gorm.ErrRecordNotFound)
@@ -242,12 +252,13 @@ func TestDeleteDulceInCarritoNotFoundError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
 func TestDeleteDulceInCarritoInternalServerError(t *testing.T) {
 	initialize()
 
-	carritoDulce := GetMockCarritoDulce()
+	carritoDulce := getMockCarritoDulce()
 
 	mockDB.ExpectBegin()
 	mockDB.ExpectExec(QueryDeleteDulceInCarrito).WillReturnError(gorm.ErrInvalidData)
@@ -258,9 +269,10 @@ func TestDeleteDulceInCarritoInternalServerError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.NoError(t, mockDB.ExpectationsWereMet())
 }
 
-func GetMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
+func getMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
 	carritoDulce = entities.CarritoDulce{
 		ID:        1,
 		CarritoID: 1,
@@ -271,7 +283,7 @@ func GetMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
 	return
 }
 
-func GetMockCarritoDulceSinID() (carritoDulce entities.CarritoDulce) {
+func getMockCarritoDulceSinID() (carritoDulce entities.CarritoDulce) {
 	carritoDulce = entities.CarritoDulce{
 		CarritoID: 1,
 		DulceID:   1,
@@ -281,7 +293,7 @@ func GetMockCarritoDulceSinID() (carritoDulce entities.CarritoDulce) {
 	return
 }
 
-func GetResponse() (response entities.Carrito) {
+func getResponse() (response entities.Carrito) {
 	response = entities.Carrito{
 		ID:          mockCarritoID,
 		PrecioTotal: 1000,

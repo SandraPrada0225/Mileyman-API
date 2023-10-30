@@ -33,7 +33,7 @@ const (
 func TestGetBycodeOK(t *testing.T) {
 	initialize()
 
-	dulce := GetResponse()
+	dulce := getResponse()
 
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(dulce.Codigo).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "presentacion_nombre", "descripcion", "imagen", "disponibles", "precio_unidad", "peso", "marca_id", "marca_nombre", "codigo"}).AddRow(
@@ -75,7 +75,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 func TestGetDetailByIDOK(t *testing.T) {
 	initialize()
 
-	dulce := GetResponse()
+	dulce := getResponse()
 
 	mockDB.ExpectQuery(QuerySelectByID).WithArgs(dulce.ID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "presentacion_nombre", "descripcion", "imagen", "disponibles", "precio_unidad", "peso", "marca_id", "marca_nombre", "codigo"}).AddRow(
@@ -117,7 +117,7 @@ func TestGetDetailByIDInternalServerError(t *testing.T) {
 func TestGetByIDOK(t *testing.T) {
 	initialize()
 
-	dulce := GetMockDulce()
+	dulce := getMockDulce()
 
 	mockDB.ExpectQuery(QueryGetByID).WithArgs(dulce.ID).WillReturnRows(
 		sqlmock.NewRows([]string{
@@ -215,7 +215,7 @@ func initialize() {
 	}
 }
 
-func GetResponse() (response query.DetalleDulce) {
+func getResponse() (response query.DetalleDulce) {
 	response = query.DetalleDulce{
 		ID:     MockDulceID,
 		Nombre: "Chocolatina",
@@ -237,7 +237,7 @@ func GetResponse() (response query.DetalleDulce) {
 	return
 }
 
-func GetMockDulce() (dulce entities.Dulce) {
+func getMockDulce() (dulce entities.Dulce) {
 	dulce = entities.Dulce{
 		ID:               1,
 		Nombre:           "Gomas Clasicas",

@@ -32,7 +32,7 @@ func (handler UpdateCarrito) Handle() gin.HandlerFunc {
 
 		err = c.ShouldBindJSON(&command)
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			c.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 

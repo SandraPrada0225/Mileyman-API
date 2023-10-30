@@ -34,17 +34,11 @@ func (mock *MockCarritoProvider) GetDulceByCarritoIDAndDulceID(carritoID uint64,
 func (mock *MockCarritoProvider) AddDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	args := mock.Called(carritoDulce)
 	err = args.Error(0)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (mock *MockCarritoProvider) DeleteDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	args := mock.Called(carritoDulce)
 	err = args.Error(0)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

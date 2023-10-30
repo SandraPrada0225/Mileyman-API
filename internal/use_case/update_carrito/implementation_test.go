@@ -37,24 +37,23 @@ func initialize() {
 
 func TestWhentSucessfullyThenShouldOK(t *testing.T) {
 	initialize()
-	movements := GetMockMovements()
-	carritoDulce := GetMockCarritoDulce()
+	movements := getMockMovements()
+	carritoDulce := getMockCarritoDulce()
 	dulce1 := getMockDulce1()
 	dulce2 := getMockDulce2()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
-	// Updated
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(dulce1, nil)
-	mockCarritosProvider.On("AddDulceInCarrito", GetMockCarritoDulceUpdated()).Return(nil)
+	mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulceUpdated()).Return(nil)
 
-	// created
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[1].DulceID).Return(entities.CarritoDulce{}, false, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[1].DulceID).Return(dulce2, nil)
-	mockCarritosProvider.On("AddDulceInCarrito", GetMockCarritoDulce2()).Return(nil)
+	mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulce2()).Return(nil)
 
-	// Deleted
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[2].DulceID).Return(carritoDulce, true, nil)
 	mockCarritosProvider.On("DeleteDulceInCarrito", carritoDulce).Return(nil)
 
@@ -71,11 +70,11 @@ func TestWhentSucessfullyThenShouldOK(t *testing.T) {
 
 func TestWhentDeleteFailedThenShouldError(t *testing.T) {
 	initialize()
-	movements := GetMockMovements2()
-	carritoDulce := GetMockCarritoDulce2()
+	movements := getMockMovements2()
+	carritoDulce := getMockCarritoDulce2()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
-	// Deleted
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(entities.CarritoDulce{}, false, nil)
 	mockCarritosProvider.On("DeleteDulceInCarrito", entities.CarritoDulce{}).Return(errors.New("No se encontró un detalle carrito_dulce con ese codigo. resource: carrito"))
 
@@ -90,13 +89,13 @@ func TestWhentDeleteFailedThenShouldError(t *testing.T) {
 
 func TestWhentAddDulceFailedThenShouldUnitLimitExceded(t *testing.T) {
 	initialize()
-	movements := GetMockMovements3()
-	carritoDulce := GetMockCarritoDulce()
+	movements := getMockMovements3()
+	carritoDulce := getMockCarritoDulce()
 	dulce1 := getMockDulce1()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
-	// Updated
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(dulce1, nil)
 
@@ -111,8 +110,8 @@ func TestWhentAddDulceFailedThenShouldUnitLimitExceded(t *testing.T) {
 
 func TestWhenGetByIDFailedThenShouldNotFoundError(t *testing.T) {
 	initialize()
-	movements := GetMockMovements4()
-	carritoDulce := GetMockCarritoDulce()
+	movements := getMockMovements4()
+	carritoDulce := getMockCarritoDulce()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
@@ -130,8 +129,8 @@ func TestWhenGetByIDFailedThenShouldNotFoundError(t *testing.T) {
 
 func TestWhenGetDulceByCarritoIDAndDulceIDFailedThenShouldInternalServerError(t *testing.T) {
 	initialize()
-	movements := GetMockMovements4()
-	carritoDulce := GetMockCarritoDulce()
+	movements := getMockMovements4()
+	carritoDulce := getMockCarritoDulce()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
@@ -147,22 +146,22 @@ func TestWhenGetDulceByCarritoIDAndDulceIDFailedThenShouldInternalServerError(t 
 
 func TestWhentOneMovementErrorThenShouldOK(t *testing.T) {
 	initialize()
-	movements := GetMockMovements5()
-	carritoDulce := GetMockCarritoDulce()
+	movements := getMockMovements5()
+	carritoDulce := getMockCarritoDulce()
 	dulce1 := getMockDulce1()
 	dulce2 := getMockDulce2()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
-	// Updated
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(dulce1, nil)
-	// created
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[1].DulceID).Return(entities.CarritoDulce{}, false, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[1].DulceID).Return(dulce2, nil)
-	mockCarritosProvider.On("AddDulceInCarrito", GetMockCarritoDulce2()).Return(nil)
+	mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulce2()).Return(nil)
 
-	// Deleted
+	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[2].DulceID).Return(carritoDulce, true, nil)
 	mockCarritosProvider.On("DeleteDulceInCarrito", carritoDulce).Return(nil)
 
@@ -179,7 +178,7 @@ func TestWhentOneMovementErrorThenShouldOK(t *testing.T) {
 
 func TestWhenGetCarritoByCarritoIDFailedThenShouldNotFoundError(t *testing.T) {
 	initialize()
-	movements := GetMockMovements4()
+	movements := getMockMovements4()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID2).Return(entities.Carrito{}, database.NewNotFoundError("error"))
 
@@ -196,7 +195,7 @@ func TestWhenGetCarritoByCarritoIDFailedThenShouldNotFoundError(t *testing.T) {
 
 func TestWhenGetCarritoByCarritoIDFailedThenShouldInternalServerError(t *testing.T) {
 	initialize()
-	movements := GetMockMovements4()
+	movements := getMockMovements4()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID2).Return(entities.Carrito{}, database.NewInternalServerError("error"))
 
@@ -239,7 +238,7 @@ func getMockDulce2() (Dulce entities.Dulce) {
 	return
 }
 
-func GetMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
+func getMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
 	carritoDulce = entities.CarritoDulce{
 		ID:        1,
 		CarritoID: 1,
@@ -250,7 +249,7 @@ func GetMockCarritoDulce() (carritoDulce entities.CarritoDulce) {
 	return
 }
 
-func GetMockCarritoDulce2() (carritoDulce entities.CarritoDulce) {
+func getMockCarritoDulce2() (carritoDulce entities.CarritoDulce) {
 	carritoDulce = entities.CarritoDulce{
 		CarritoID: 1,
 		DulceID:   2,
@@ -260,7 +259,7 @@ func GetMockCarritoDulce2() (carritoDulce entities.CarritoDulce) {
 	return
 }
 
-func GetMockCarritoDulceUpdated() (carritoDulce entities.CarritoDulce) {
+func getMockCarritoDulceUpdated() (carritoDulce entities.CarritoDulce) {
 	carritoDulce = entities.CarritoDulce{
 		ID:        1,
 		CarritoID: 1,
@@ -271,7 +270,7 @@ func GetMockCarritoDulceUpdated() (carritoDulce entities.CarritoDulce) {
 	return
 }
 
-func GetMockMovements() (movements updatecarrito.Body) {
+func getMockMovements() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{
@@ -291,7 +290,7 @@ func GetMockMovements() (movements updatecarrito.Body) {
 	return
 }
 
-func GetMockMovements2() (movements updatecarrito.Body) {
+func getMockMovements2() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{
@@ -303,7 +302,7 @@ func GetMockMovements2() (movements updatecarrito.Body) {
 	return
 }
 
-func GetMockMovements3() (movements updatecarrito.Body) {
+func getMockMovements3() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{
@@ -315,7 +314,7 @@ func GetMockMovements3() (movements updatecarrito.Body) {
 	return
 }
 
-func GetMockMovements4() (movements updatecarrito.Body) {
+func getMockMovements4() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{
@@ -327,7 +326,7 @@ func GetMockMovements4() (movements updatecarrito.Body) {
 	return
 }
 
-func GetMockMovements5() (movements updatecarrito.Body) {
+func getMockMovements5() (movements updatecarrito.Body) {
 	movements = updatecarrito.Body{
 		Movements: []updatecarrito.Movement{
 			{

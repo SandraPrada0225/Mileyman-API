@@ -1,6 +1,6 @@
 package mocks
 
-// dado unos parametros devuelve la respuesta deseada para comprobar que el caso de uso reaccione bien ante las diferentes situaciones
+
 
 import (
 	"Mileyman-API/internal/domain/dto/query"
@@ -10,7 +10,7 @@ import (
 )
 
 type MockDulceProvider struct {
-	mock.Mock // implementacion boba de la interface
+	mock.Mock 
 }
 
 func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, error) {

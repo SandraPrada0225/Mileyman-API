@@ -29,7 +29,7 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
 		} else {
-			err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
+			err = database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
 		}
 	}
 
@@ -84,7 +84,7 @@ func (r Repository) GetByID(id uint64) (dulce entities.Dulce, err error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
 		} else {
-			err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
+			err = database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
 		}
 	}
 	return
