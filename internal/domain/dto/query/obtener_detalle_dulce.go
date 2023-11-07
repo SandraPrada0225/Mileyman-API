@@ -5,7 +5,7 @@ import "Mileyman-API/internal/domain/entities"
 type DetalleDulce struct {
 	ID               uint64                `json:"id"`
 	Peso             int                   `json:"peso"`
-	PrecioUnidad     int                   `json:"precio_unidad"`
+	PrecioUnidad     float64               `json:"precio_unidad"`
 	Disponibles      int                   `json:"disponibles"`
 	Codigo           string                `json:"codigo"`
 	Nombre           string                `json:"nombre"`

@@ -23,9 +23,9 @@ const (
 )
 
 func TestGetAllOK(t *testing.T) {
-	inicialize()
+	initialize()
 
-	marcas := GetMarcas()
+	marcas := getMarcas()
 
 	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
@@ -39,7 +39,7 @@ func TestGetAllOK(t *testing.T) {
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
-	inicialize()
+	initialize()
 	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
 
 	marcasRecibidas, err := repository.GetAll()
@@ -51,7 +51,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Empty(t, marcasRecibidas)
 }
 
-func inicialize() {
+func initialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
 	repository = Repository{
@@ -59,7 +59,7 @@ func inicialize() {
 	}
 }
 
-func GetMarcas() (marcas []entities.Marca) {
+func getMarcas() (marcas []entities.Marca) {
 	marcas = []entities.Marca{
 		{
 			ID:     1,

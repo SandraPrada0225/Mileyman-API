@@ -1,6 +1,5 @@
 package getdulcebycode
 
-// es un camarero
 
 import (
 	"net/http"

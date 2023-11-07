@@ -29,7 +29,7 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
 		} else {
-			err = database.NewInternalServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
+			err = database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
 		}
 	}
 
@@ -57,7 +57,6 @@ func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, e
 }
 
 func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) {
-
 	var dulcesInCarrito []entities.CarritoDulce
 
 	err := r.DB.Model(&entities.CarritoDulce{}).
@@ -74,4 +73,19 @@ func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.Carr
 	}
 
 	return dulcesInCarrito, nil
+}
+
+func (r Repository) GetByID(id uint64) (dulce entities.Dulce, err error) {
+	err = r.DB.Where("id = ?", id).Take(&dulce).Error
+	if err != nil {
+		params := errormessages.Parameters{
+			"resource": "dulce",
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
+		} else {
+			err = database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
+		}
+	}
+	return
 }

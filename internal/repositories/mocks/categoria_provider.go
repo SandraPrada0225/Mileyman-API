@@ -7,7 +7,7 @@ import (
 )
 
 type MockCategoriaProvider struct {
-	mock.Mock // implementacion boba de la interface//herencia de otra forma en go
+	mock.Mock 
 }
 
 func (mock *MockCategoriaProvider) GetAll() ([]entities.Categoria, error) {

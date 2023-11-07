@@ -20,12 +20,13 @@ var (
 
 const (
 	QuerySelectByCode = "Call GetCategoriasByDulceID(?)"
+	QuerySelectAll    = "SELECT * FROM `Categorias`"
 )
 
 func TestGetBycodeOK(t *testing.T) {
-	inicialize()
+	initialize()
 
-	mockCategorias := GetMockCategorias()
+	mockCategorias := getMockCategorias()
 
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
@@ -38,7 +39,8 @@ func TestGetBycodeOK(t *testing.T) {
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
-	inicialize()
+	initialize()
+
 	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnError(gorm.ErrInvalidData)
 
 	dulceRecibido, err := repository.GetCategoriasByDulceID(1)
@@ -50,7 +52,36 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
-func inicialize() {
+func TestGetAllOK(t *testing.T) {
+	initialize()
+
+	categorias := getMockCategorias()
+
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "nombre"}).
+			AddRow(categorias[0].ID, categorias[0].Nombre).
+			AddRow(categorias[1].ID, categorias[1].Nombre),
+	)
+	categoriasRecibidas, err := repository.GetAll()
+
+	assert.NoError(t, err)
+	assert.Equal(t, categorias, categoriasRecibidas)
+}
+
+func TestGetAllInternalServerError(t *testing.T) {
+	initialize()
+	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
+
+	categoriasRecibidas, err := repository.GetAll()
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.Empty(t, categoriasRecibidas)
+}
+
+func initialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
 	repository = Repository{
@@ -58,7 +89,7 @@ func inicialize() {
 	}
 }
 
-func GetMockCategorias() (categorias []entities.Categoria) {
+func getMockCategorias() (categorias []entities.Categoria) {
 	categorias = []entities.Categoria{
 		{
 			ID:     1,
