@@ -7,7 +7,7 @@ import (
 )
 
 type MockPresentacionProvider struct {
-	mock.Mock // implementacion boba de la interface
+	mock.Mock 
 }
 
 func (mock *MockPresentacionProvider) GetAll() ([]entities.Presentacion, error) {

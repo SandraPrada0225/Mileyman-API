@@ -1,0 +1,71 @@
+@startuml Update carrito 
+
+participant Caller
+participant Handler as handler
+participant UseCase
+participant CarritosProvider as carritosp
+Participant CarritoDulceEntitie as carritodulcee
+participant DulcesProvider as dulcesp
+participant Query
+
+
+
+Caller -> handler++ : PUT /api/carritos/{id}
+    handler -> handler: id, err := strconv.ParseUint(id)
+        alt err != nil
+            handler -> Caller: 400 Bad Request
+        end
+    handler -> handler: err = ShouldBindJSON(movements)
+        alt err != nil
+            handler -> Caller: 422 Status Unprocessable Entity
+        end
+    handler -> UseCase++ : Execute(id, movements)
+        UseCase -> carritosp++ : GetCarritoByCarritoID(id)
+        carritosp -> UseCase --: <_, err>
+        alt err != nil
+            UseCase -> handler: nil, err
+            handler -> Caller: err
+        end
+        loop index, movement := range movements
+            UseCase -> carritosp++ : GetDulceByCarritoIDAndDulceID(id, dulceID)
+            carritosp -> UseCase --: <carritoDulce, exists, err>
+
+            alt unidades == 0
+                UseCase -> carritosp++ : DeleteDulceInCarrito(carritoDulce)
+                carritosp -> UseCase --: <err>;
+                alt err != nil
+                    UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
+                end
+            end
+            alt !exists
+                UseCase -> carritodulcee++: NewCarritoDulce(id, DulceID)
+                carritodulcee -> UseCase--:<carritoDulce>
+                UseCase -> UseCase++: save(movement, carritoDulce)
+                UseCase -> dulcesp++: GetByID(DulceID)
+                dulcesp -> UseCase--: <dulce, err>
+                UseCase -> carritosp++ : AddDulceInCarrito(carritoDulce)
+                carritosp -> UseCase-- : <err>
+                UseCase -> UseCase --: <err>;
+                alt err != nil
+                    UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
+                end
+            end
+            alt exists
+                UseCase -> UseCase++: save(movement, carritoDulce)
+                UseCase -> dulcesp++: GetByID(DulceID)
+                dulcesp -> UseCase--: <dulce, err>
+                UseCase -> carritosp++ : AddDulceInCarrito(carritoDulce)
+                carritosp -> UseCase-- : <err>
+                UseCase -> UseCase --: <err>;
+                alt err != nil
+                    UseCase -> Query ++: query.AddResult(index, dulceID, "Error", err.Error())
+                    Query -> UseCase --: query
+                end
+            end
+            UseCase -> Query ++: query.AddResult(index, dulceID, operationResult, "")
+            Query -> UseCase --: query
+        end
+    UseCase -> handler -- : query.NewMovementsResult(), nil
+handler -> Caller-- : <200, updateCarrito>

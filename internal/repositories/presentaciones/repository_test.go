@@ -23,7 +23,7 @@ const (
 )
 
 func TestGetAllOK(t *testing.T) {
-	inicialize()
+	initialize()
 
 	presentaciones := GetPresentaciones()
 
@@ -39,7 +39,7 @@ func TestGetAllOK(t *testing.T) {
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
-	inicialize()
+	initialize()
 	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
 
 	presentacionesRecibidos, err := repository.GetAll()
@@ -51,7 +51,7 @@ func TestByCodeInternalServerError(t *testing.T) {
 	assert.Empty(t, presentacionesRecibidos)
 }
 
-func inicialize() {
+func initialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
 	repository = Repository{

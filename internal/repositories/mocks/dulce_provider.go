@@ -1,6 +1,6 @@
 package mocks
 
-// dado unos parametros devuelve la respuesta deseada para comprobar que el caso de uso reaccione bien nate las diferentes situaciones
+
 
 import (
 	"Mileyman-API/internal/domain/dto/query"
@@ -10,7 +10,7 @@ import (
 )
 
 type MockDulceProvider struct {
-	mock.Mock // implementacion boba de la interface
+	mock.Mock 
 }
 
 func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, error) {
@@ -43,4 +43,15 @@ func (mock *MockDulceProvider) GetDulcesListByCarritoID(carrito_id uint64) ([]en
 		return response.([]entities.CarritoDulce), err
 	}
 	return []entities.CarritoDulce{}, err
+}
+
+func (mock *MockDulceProvider) GetByID(id uint64) (entities.Dulce, error) {
+	args := mock.Called(id)
+	response := args.Get(0)
+	err := args.Error(1)
+
+	if response != nil {
+		return response.(entities.Dulce), err
+	}
+	return entities.Dulce{}, err
 }
