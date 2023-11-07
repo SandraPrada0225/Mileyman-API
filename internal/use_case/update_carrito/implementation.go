@@ -16,7 +16,7 @@ type Implementation struct {
 }
 
 func (UseCase Implementation) Execute(carritoID uint64, movements updatecarrito.Body) (query.MovementsResult, error) {
-	_, err := UseCase.CarritosProvider.GetCarritoByCarritoID(carritoID)
+	_, err := UseCase.CarritosProvider.GetByID(carritoID)
 	if err != nil {
 		return query.MovementsResult{}, err
 	}

@@ -1,6 +1,5 @@
 package providers
 
-
 import (
 	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/entities"

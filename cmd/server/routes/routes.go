@@ -31,9 +31,9 @@ type Router interface {
 }
 
 type router struct {
-	eng *gin.Engine     
-	rg  *gin.RouterGroup 
-	db  *gorm.DB         
+	eng *gin.Engine
+	rg  *gin.RouterGroup
+	db  *gorm.DB
 }
 
 func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
@@ -46,11 +46,9 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	
 	pingHandler := ping.Ping{}
 	r.rg.GET("/ping", pingHandler.Handle())
 
-	
 	dulcesProvider := dulces.Repository{
 		DB: r.db,
 	}

@@ -36,36 +36,36 @@ func initialize() {
 }
 
 func TestWhentSucessfullyThenShouldOK(t *testing.T) {
-	initialize()
-	movements := getMockMovements()
-	carritoDulce := getMockCarritoDulce()
-	dulce1 := getMockDulce1()
-	dulce2 := getMockDulce2()
+    initialize()
+    movements := getMockMovements()
+    carritoDulce := getMockCarritoDulce()
+    dulce1 := getMockDulce1()
+    dulce2 := getMockDulce2()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+    mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
-	
-	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
-	mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(dulce1, nil)
-	mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulceUpdated()).Return(nil)
 
-	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[1].DulceID).Return(entities.CarritoDulce{}, false, nil)
-	mockDulcesProvider.On("GetByID", movements.Movements[1].DulceID).Return(dulce2, nil)
-	mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulce2()).Return(nil)
+    mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
+    mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(dulce1, nil)
+    mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulceUpdated()).Return(nil)
 
-	
-	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[2].DulceID).Return(carritoDulce, true, nil)
-	mockCarritosProvider.On("DeleteDulceInCarrito", carritoDulce).Return(nil)
+    mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[1].DulceID).Return(entities.CarritoDulce{}, false, nil)
+    mockDulcesProvider.On("GetByID", movements.Movements[1].DulceID).Return(dulce2, nil)
+    mockCarritosProvider.On("AddDulceInCarrito", getMockCarritoDulce2()).Return(nil)
 
-	queryResponse, err := useCase.Execute(carritoDulce.CarritoID, movements)
 
-	assert.NoError(t, err)
-	assert.Equal(t, getMockExpectedResponse(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 3)
-	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 2)
-	mockCarritosProvider.AssertNumberOfCalls(t, "AddDulceInCarrito", 2)
-	mockCarritosProvider.AssertNumberOfCalls(t, "DeleteDulceInCarrito", 1)
+    mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[2].DulceID).Return(carritoDulce, true, nil)
+    mockCarritosProvider.On("DeleteDulceInCarrito", carritoDulce).Return(nil)
+
+    queryResponse, err := useCase.Execute(carritoDulce.CarritoID, movements)
+
+    assert.NoError(t, err)
+    assert.Equal(t, getMockExpectedResponse(), queryResponse)
+    mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
+    mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 3)
+    mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 2)
+    mockCarritosProvider.AssertNumberOfCalls(t, "AddDulceInCarrito", 2)
+    mockCarritosProvider.AssertNumberOfCalls(t, "DeleteDulceInCarrito", 1)
 }
 
 func TestWhentDeleteFailedThenShouldError(t *testing.T) {
@@ -73,7 +73,7 @@ func TestWhentDeleteFailedThenShouldError(t *testing.T) {
 	movements := getMockMovements2()
 	carritoDulce := getMockCarritoDulce2()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+	mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(entities.CarritoDulce{}, false, nil)
 	mockCarritosProvider.On("DeleteDulceInCarrito", entities.CarritoDulce{}).Return(errors.New("No se encontró un detalle carrito_dulce con ese codigo. resource: carrito"))
@@ -82,7 +82,7 @@ func TestWhentDeleteFailedThenShouldError(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse2(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "DeleteDulceInCarrito", 1)
 }
@@ -93,7 +93,7 @@ func TestWhentAddDulceFailedThenShouldUnitLimitExceded(t *testing.T) {
 	carritoDulce := getMockCarritoDulce()
 	dulce1 := getMockDulce1()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+	mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
 	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
@@ -103,7 +103,7 @@ func TestWhentAddDulceFailedThenShouldUnitLimitExceded(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse3(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 1)
 }
@@ -113,7 +113,7 @@ func TestWhenGetByIDFailedThenShouldNotFoundError(t *testing.T) {
 	movements := getMockMovements4()
 	carritoDulce := getMockCarritoDulce()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+	mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(entities.CarritoDulce{}, false, nil)
 	mockDulcesProvider.On("GetByID", movements.Movements[0].DulceID).Return(entities.Dulce{}, errors.New("No se encontró un dulce con ese codigo. resource: dulce"))
@@ -122,7 +122,7 @@ func TestWhenGetByIDFailedThenShouldNotFoundError(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse4(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 1)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 1)
 }
@@ -132,7 +132,7 @@ func TestWhenGetDulceByCarritoIDAndDulceIDFailedThenShouldInternalServerError(t 
 	movements := getMockMovements4()
 	carritoDulce := getMockCarritoDulce()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+	mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(entities.CarritoDulce{}, false, errors.New("Ha ocurrido un error inesperado"))
 
@@ -140,7 +140,7 @@ func TestWhenGetDulceByCarritoIDAndDulceIDFailedThenShouldInternalServerError(t 
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse5(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 1)
 }
 
@@ -151,7 +151,7 @@ func TestWhentOneMovementErrorThenShouldOK(t *testing.T) {
 	dulce1 := getMockDulce1()
 	dulce2 := getMockDulce2()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
+	mockCarritosProvider.On("GetByID", carritoDulce.CarritoID).Return(getMockCarrito(), nil)
 
 	
 	mockCarritosProvider.On("GetDulceByCarritoIDAndDulceID", carritoDulce.CarritoID, movements.Movements[0].DulceID).Return(carritoDulce, true, nil)
@@ -169,7 +169,7 @@ func TestWhentOneMovementErrorThenShouldOK(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, getMockExpectedResponse6(), queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 	mockCarritosProvider.AssertNumberOfCalls(t, "GetDulceByCarritoIDAndDulceID", 3)
 	mockDulcesProvider.AssertNumberOfCalls(t, "GetByID", 2)
 	mockCarritosProvider.AssertNumberOfCalls(t, "AddDulceInCarrito", 1)
@@ -180,7 +180,7 @@ func TestWhenGetCarritoByCarritoIDFailedThenShouldNotFoundError(t *testing.T) {
 	initialize()
 	movements := getMockMovements4()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID2).Return(entities.Carrito{}, database.NewNotFoundError("error"))
+	mockCarritosProvider.On("GetByID", mockCarritoID2).Return(entities.Carrito{}, database.NewNotFoundError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID2, movements)
 
@@ -190,14 +190,14 @@ func TestWhenGetCarritoByCarritoIDFailedThenShouldNotFoundError(t *testing.T) {
 
 	assert.Equal(t, "database.NotFoundError", typeErr)
 	assert.Empty(t, queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 }
 
 func TestWhenGetCarritoByCarritoIDFailedThenShouldInternalServerError(t *testing.T) {
 	initialize()
 	movements := getMockMovements4()
 
-	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID2).Return(entities.Carrito{}, database.NewInternalServerError("error"))
+	mockCarritosProvider.On("GetByID", mockCarritoID2).Return(entities.Carrito{}, database.NewInternalServerError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID2, movements)
 
@@ -207,7 +207,7 @@ func TestWhenGetCarritoByCarritoIDFailedThenShouldInternalServerError(t *testing
 
 	assert.Equal(t, "database.InternalServerError", typeErr)
 	assert.Empty(t, queryResponse)
-	mockCarritosProvider.AssertNumberOfCalls(t, "GetCarritoByCarritoID", 1)
+	mockCarritosProvider.AssertNumberOfCalls(t, "GetByID", 1)
 }
 
 func getMockDulce1() (Dulce entities.Dulce) {
@@ -451,7 +451,7 @@ func getMockExpectedResponse6() query.MovementsResult {
 func getMockCarrito() entities.Carrito {
 	return entities.Carrito{
 		ID:          mockCarritoID,
-		SubTotal:    0,
+		Subtotal:    0,
 		PrecioTotal: 0,
 		Descuento:   0,
 		Envio:       0,

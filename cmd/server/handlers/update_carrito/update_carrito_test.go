@@ -64,13 +64,13 @@ func TestOkUpdateCarrito(t *testing.T) {
 	}
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(getMockMovements())
-	if(err != nil){
+	err := json.NewEncoder(&body).Encode(getMockMovements())
+	if err != nil {
 		panic(err.Error())
 	}
 
 	movementsResultjson, err := json.Marshal(&movementsResult)
-	if(err != nil){
+	if err != nil {
 		panic(err.Error())
 	}
 	mockUpdateCarrito.On("Execute", mockCarritoID, getMockMovements()).Return(movementsResult, nil)
@@ -92,8 +92,8 @@ func TestWhenNotFoundShouldReturn404(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(getMockMovements())
-	if(err != nil){
+	err := json.NewEncoder(&body).Encode(getMockMovements())
+	if err != nil {
 		panic(err.Error())
 	}
 	mockUpdateCarrito.On("Execute", mockCarritoID2, getMockMovements()).Return(query.MovementsResult{}, database.NewNotFoundError(""))
@@ -111,8 +111,8 @@ func TestWhenInternalServerErrorShouldReturn500(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(getMockMovements())
-	if(err != nil){
+	err := json.NewEncoder(&body).Encode(getMockMovements())
+	if err != nil {
 		panic(err.Error())
 	}
 	mockUpdateCarrito.On("Execute", mockCarritoID, getMockMovements()).Return(query.MovementsResult{}, database.NewInternalServerError(""))
@@ -130,8 +130,8 @@ func TestWhenInternalServerErrorShouldReturn400(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode(getMockMovements())
-	if(err != nil){
+	err := json.NewEncoder(&body).Encode(getMockMovements())
+	if err != nil {
 		panic(err.Error())
 	}
 	request := httptest.NewRequest("PUT", "/api/carritos/s", &body)
@@ -147,8 +147,8 @@ func TestWhenShouldBindJSONFailedShouldReturn400(t *testing.T) {
 	r := CreateServerUpdateCarrito()
 
 	var body bytes.Buffer
-	err :=json.NewEncoder(&body).Encode("StatusUnprocessableEntity")
-	if(err != nil){
+	err := json.NewEncoder(&body).Encode("StatusUnprocessableEntity")
+	if err != nil {
 		panic(err.Error())
 	}
 	request := httptest.NewRequest("PUT", "/api/carritos/1", &body)

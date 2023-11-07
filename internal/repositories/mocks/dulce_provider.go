@@ -1,7 +1,5 @@
 package mocks
 
-
-
 import (
 	"Mileyman-API/internal/domain/dto/query"
 	"Mileyman-API/internal/domain/entities"
@@ -10,7 +8,7 @@ import (
 )
 
 type MockDulceProvider struct {
-	mock.Mock 
+	mock.Mock
 }
 
 func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, error) {

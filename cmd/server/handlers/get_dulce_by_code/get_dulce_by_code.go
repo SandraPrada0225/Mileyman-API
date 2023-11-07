@@ -1,6 +1,5 @@
 package getdulcebycode
 
-
 import (
 	"net/http"
 
