@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"Mileyman-API/internal/domain/dto/query"
+	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	errormessages "Mileyman-API/internal/domain/errors/error_messages"
+	"Mileyman-API/internal/domain/errors/errormessages"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +18,7 @@ type Repository struct {
 
 const GetDetalleDulceByCodeSP = "Call GetDetalleDulceByCode(?)"
 
-func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, err error) {
+func (r Repository) GetByCode(codigo string) (detalleDulce responses.DetalleDulce, err error) {
 	err = r.DB.Raw(GetDetalleDulceByCodeSP, codigo).Take(&detalleDulce).Error
 
 	if err != nil {
@@ -38,7 +38,7 @@ func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, e
 
 const GetDetalleDulceByIDSP = "Call GetDetalleDulceByID(?)"
 
-func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, err error) {
+func (r Repository) GetDetailByID(id uint64) (detalleDulce responses.DetalleDulce, err error) {
 	err = r.DB.Raw(GetDetalleDulceByIDSP, id).Take(&detalleDulce).Error
 
 	if err != nil {

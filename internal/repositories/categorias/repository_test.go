@@ -19,8 +19,8 @@ var (
 )
 
 const (
-	QuerySelectByCode = "Call GetCategoriasByDulceID(?)"
-	QuerySelectAll    = "SELECT * FROM `Categorias`"
+	querySelectByCode = "Call GetCategoriasByDulceID(?)"
+	querySelectAll    = "SELECT * FROM `Categorias`"
 )
 
 func TestGetBycodeOK(t *testing.T) {
@@ -28,7 +28,7 @@ func TestGetBycodeOK(t *testing.T) {
 
 	mockCategorias := getMockCategorias()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
+	mockDB.ExpectQuery(querySelectByCode).WithArgs(1).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
 			AddRow(mockCategorias[0].ID, mockCategorias[0].Nombre).
 			AddRow(mockCategorias[1].ID, mockCategorias[1].Nombre))
@@ -41,7 +41,7 @@ func TestGetBycodeOK(t *testing.T) {
 func TestByCodeInternalServerError(t *testing.T) {
 	initialize()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectByCode).WithArgs(1).WillReturnError(gorm.ErrInvalidData)
 
 	dulceRecibido, err := repository.GetCategoriasByDulceID(1)
 
@@ -57,7 +57,7 @@ func TestGetAllOK(t *testing.T) {
 
 	categorias := getMockCategorias()
 
-	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
+	mockDB.ExpectQuery(querySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
 			AddRow(categorias[0].ID, categorias[0].Nombre).
 			AddRow(categorias[1].ID, categorias[1].Nombre),
@@ -70,7 +70,7 @@ func TestGetAllOK(t *testing.T) {
 
 func TestGetAllInternalServerError(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectAll).WillReturnError(gorm.ErrInvalidData)
 
 	categoriasRecibidas, err := repository.GetAll()
 

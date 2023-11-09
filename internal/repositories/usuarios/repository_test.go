@@ -19,14 +19,14 @@ var (
 )
 
 const (
-	UpdateQuery = "UPDATE `usuarios` SET `nombre`=?,`apellido`=?,`password`=?,`correo`=?,`carrito_actual_id`=? WHERE `id` = ?"
-	SelectQuery = "SELECT * FROM `usuarios` WHERE id = ? LIMIT 1"
+	updateQuery = "UPDATE `usuarios` SET `nombre`=?,`apellido`=?,`password`=?,`correo`=?,`carrito_actual_id`=? WHERE `id` = ?"
+	selectQuery = "SELECT * FROM `usuarios` WHERE id = ? LIMIT 1"
 )
 
 func TestSaveWhenIsSuccessfullShouldReturnNoError(t *testing.T) {
 	initialize()
 	mockDB.ExpectBegin()
-	mockDB.ExpectExec(UpdateQuery).WillReturnResult(sqlmock.NewResult(1, 1))
+	mockDB.ExpectExec(updateQuery).WillReturnResult(sqlmock.NewResult(1, 1))
 	mockDB.ExpectCommit()
 	mockUsuario := getMockUsuario()
 
@@ -39,7 +39,7 @@ func TestSaveWhenIsSuccessfullShouldReturnNoError(t *testing.T) {
 func TestSaveWhenWentWrongShouldReturnInternalError(t *testing.T) {
 	initialize()
 	mockDB.ExpectBegin()
-	mockDB.ExpectExec(UpdateQuery).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectExec(updateQuery).WillReturnError(gorm.ErrInvalidData)
 	mockDB.ExpectRollback()
 	mockUsuario := getMockUsuario()
 
@@ -52,7 +52,7 @@ func TestSaveWhenWentWrongShouldReturnInternalError(t *testing.T) {
 func TestSaveWhenCarBelongsToOtherUserShouldReturnConflictError(t *testing.T) {
 	initialize()
 	mockDB.ExpectBegin()
-	mockDB.ExpectExec(UpdateQuery).WillReturnError(gorm.ErrDuplicatedKey)
+	mockDB.ExpectExec(updateQuery).WillReturnError(gorm.ErrDuplicatedKey)
 	mockDB.ExpectRollback()
 	mockUsuario := getMockUsuario()
 
@@ -66,7 +66,7 @@ func TestGetByIDWhenIsSuccessfullReturnUsuario(t *testing.T) {
 	initialize()
 	mockUsuario := getMockUsuario()
 
-	mockDB.ExpectQuery(SelectQuery).WithArgs(mockUsuario.ID).WillReturnRows(
+	mockDB.ExpectQuery(selectQuery).WithArgs(mockUsuario.ID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre", "apellido", "correo", "password", "carrito_actual_id"}).
 			AddRow(mockUsuario.ID, mockUsuario.Nombre, mockUsuario.Apellido, mockUsuario.Correo, mockUsuario.Password, mockUsuario.CarritoActualID),
 	)
@@ -82,7 +82,7 @@ func TestGetByIDWhenUsuarioDoesNotExistsShouldReturnNotFoundError(t *testing.T) 
 	initialize()
 	mockUsuario := getMockUsuario()
 
-	mockDB.ExpectQuery(SelectQuery).WithArgs(mockUsuario.ID).WillReturnError(gorm.ErrRecordNotFound)
+	mockDB.ExpectQuery(selectQuery).WithArgs(mockUsuario.ID).WillReturnError(gorm.ErrRecordNotFound)
 
 	usuario, err := repository.GetByID(mockUsuario.ID)
 
@@ -96,7 +96,7 @@ func TestGetByIDWhenWentWrongShouldReturnInternalError(t *testing.T) {
 	initialize()
 	mockUsuario := getMockUsuario()
 
-	mockDB.ExpectQuery(SelectQuery).WithArgs(mockUsuario.ID).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(selectQuery).WithArgs(mockUsuario.ID).WillReturnError(gorm.ErrInvalidData)
 
 	usuario, err := repository.GetByID(mockUsuario.ID)
 
@@ -112,7 +112,7 @@ func getMockUsuario() entities.Usuario {
 		Nombre:          "Frey",
 		Apellido:        "Man",
 		CarritoActualID: 2,
-		Password:        "MeQuieroMuch0",
+		Password:        "TeQuieroMuch0M1l3",
 	}
 }
 
