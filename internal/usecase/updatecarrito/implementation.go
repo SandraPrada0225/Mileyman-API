@@ -2,7 +2,7 @@ package updatecarrito
 
 import (
 	"Mileyman-API/internal/domain/constants"
-	"Mileyman-API/internal/domain/dto/command/updatecarrito"
+	"Mileyman-API/internal/domain/dto/contracts/updatecarrito"
 	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/business"
