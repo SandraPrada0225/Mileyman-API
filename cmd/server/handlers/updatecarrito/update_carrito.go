@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"Mileyman-API/internal/domain/dto/command/updatecarrito"
+	"Mileyman-API/internal/domain/dto/contracts/updatecarrito"
 	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/errors/database"
 	"Mileyman-API/internal/domain/errors/errormessages"

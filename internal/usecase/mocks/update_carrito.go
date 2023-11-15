@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"Mileyman-API/internal/domain/dto/command/updatecarrito"
+	"Mileyman-API/internal/domain/dto/contracts/updatecarrito"
 	"Mileyman-API/internal/domain/dto/responses"
 
 	"github.com/stretchr/testify/mock"

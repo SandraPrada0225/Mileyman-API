@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"Mileyman-API/internal/domain/dto/command/updatecarrito"
+	"Mileyman-API/internal/domain/dto/contracts/updatecarrito"
 	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/errors/database"
 	mocks "Mileyman-API/internal/usecase/mocks"
