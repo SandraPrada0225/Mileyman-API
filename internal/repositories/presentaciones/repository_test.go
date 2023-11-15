@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	QuerySelectAll = "SELECT * FROM `presentaciones`"
+	querySelectAll = "SELECT * FROM `presentaciones`"
 )
 
 func TestGetAllOK(t *testing.T) {
@@ -27,7 +27,7 @@ func TestGetAllOK(t *testing.T) {
 
 	presentaciones := GetPresentaciones()
 
-	mockDB.ExpectQuery(QuerySelectAll).WillReturnRows(
+	mockDB.ExpectQuery(querySelectAll).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre"}).
 			AddRow(presentaciones[0].ID, presentaciones[0].Nombre).
 			AddRow(presentaciones[1].ID, presentaciones[1].Nombre),
@@ -40,7 +40,7 @@ func TestGetAllOK(t *testing.T) {
 
 func TestByCodeInternalServerError(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectAll).WillReturnError(gorm.ErrInvalidData)
 
 	presentacionesRecibidos, err := repository.GetAll()
 

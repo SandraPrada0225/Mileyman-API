@@ -7,7 +7,7 @@ import (
 )
 
 type MockMarcaProvider struct {
-	mock.Mock 
+	mock.Mock
 }
 
 func (mock *MockMarcaProvider) GetAll() ([]entities.Marca, error) {

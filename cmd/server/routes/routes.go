@@ -1,20 +1,24 @@
 package routes
 
 import (
-	getcarritobyidhandler "Mileyman-API/cmd/server/handlers/get_carrito_by_id"
-	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/get_dulce_by_code"
-	getfiltroshandler "Mileyman-API/cmd/server/handlers/get_filtros"
+	getcarritobyidhandler "Mileyman-API/cmd/server/handlers/getcarritobyid"
+	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/getdulcebycode"
+	getfiltroshandler "Mileyman-API/cmd/server/handlers/getfiltros"
 	"Mileyman-API/cmd/server/handlers/ping"
-	updatecarritohandler "Mileyman-API/cmd/server/handlers/update_carrito"
+	purchasecarritohandler "Mileyman-API/cmd/server/handlers/purchasecarrito"
+	updatecarritohandler "Mileyman-API/cmd/server/handlers/updatecarrito"
 	"Mileyman-API/internal/repositories/carritos"
 	"Mileyman-API/internal/repositories/categorias"
 	"Mileyman-API/internal/repositories/dulces"
 	"Mileyman-API/internal/repositories/marcas"
 	"Mileyman-API/internal/repositories/presentaciones"
-	getcarritobyidusecase "Mileyman-API/internal/use_case/get_carrito_by_id"
-	getdulcebycodeusecase "Mileyman-API/internal/use_case/get_dulce_by_code"
-	getfiltrosusecase "Mileyman-API/internal/use_case/get_filtros"
-	updatecarritousecase "Mileyman-API/internal/use_case/update_carrito"
+	"Mileyman-API/internal/repositories/usuarios"
+	"Mileyman-API/internal/repositories/ventas"
+	getcarritobyidusecase "Mileyman-API/internal/usecase/getcarritobyid"
+	getdulcebycodeusecase "Mileyman-API/internal/usecase/getdulcebycode"
+	getfiltrosusecase "Mileyman-API/internal/usecase/getfiltros"
+	purchasecarritousecase "Mileyman-API/internal/usecase/purchasecarrito"
+	updatecarritousecase "Mileyman-API/internal/usecase/updatecarrito"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -27,9 +31,9 @@ type Router interface {
 }
 
 type router struct {
-	eng *gin.Engine     
-	rg  *gin.RouterGroup 
-	db  *gorm.DB         
+	eng *gin.Engine
+	rg  *gin.RouterGroup
+	db  *gorm.DB
 }
 
 func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
@@ -42,11 +46,9 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	
 	pingHandler := ping.Ping{}
 	r.rg.GET("/ping", pingHandler.Handle())
 
-	
 	dulcesProvider := dulces.Repository{
 		DB: r.db,
 	}
@@ -64,6 +66,14 @@ func (r router) MapRoutes() {
 	}
 
 	carritosProvider := carritos.Repository{
+		DB: r.db,
+	}
+
+	ventasProvider := ventas.Repository{
+		DB: r.db,
+	}
+
+	usuariosProvider := usuarios.Repository{
 		DB: r.db,
 	}
 
@@ -89,6 +99,13 @@ func (r router) MapRoutes() {
 		CategoriasProvider: categoriasProvider,
 	}
 
+	purchaseCarritoUseCase := purchasecarritousecase.Implementation{
+		CarritosProvider: carritosProvider,
+		UsuariosProvider: usuariosProvider,
+		VentasProvider:   ventasProvider,
+	}
+
+	// Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
 	}
@@ -101,11 +118,15 @@ func (r router) MapRoutes() {
 		UseCase: getCarritoByIDUseCase,
 	}
 
+	purchaseCarritoHandler := purchasecarritohandler.PurchaseCarrito{
+		UseCase: purchaseCarritoUseCase,
+	}
+
 	updateCarritoHandler := updatecarritohandler.UpdateCarrito{
 		UseCase: updatecarrito,
 	}
 
-
+	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
 
@@ -114,5 +135,6 @@ func (r router) MapRoutes() {
 
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
+	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
 	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
 }

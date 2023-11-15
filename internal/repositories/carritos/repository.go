@@ -6,7 +6,7 @@ import (
 
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	errormessages "Mileyman-API/internal/domain/errors/error_messages"
+	"Mileyman-API/internal/domain/errors/errormessages"
 
 	"gorm.io/gorm"
 )
@@ -15,14 +15,14 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func (r Repository) GetCarritoByCarritoID(carrito_id uint64) (entities.Carrito, error) {
+func (r Repository) GetByID(carritoID uint64) (entities.Carrito, error) {
 	var carrito entities.Carrito
 
-	err := r.DB.Where("id = ?", carrito_id).Take(&carrito).Error
+	err := r.DB.Where("id = ?", carritoID).Take(&carrito).Error
 	if err != nil {
 		params := errormessages.Parameters{
 			"resource":   "carrito",
-			"carrito_id": fmt.Sprint(carrito_id),
+			"carrito_id": fmt.Sprint(carritoID),
 		}
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -34,6 +34,15 @@ func (r Repository) GetCarritoByCarritoID(carrito_id uint64) (entities.Carrito, 
 	}
 
 	return carrito, nil
+}
+
+func (r Repository) Save(carrito *entities.Carrito) error {
+	err := r.DB.Save(carrito).Error
+	if err != nil {
+		err = database.NewInternalServerError(errormessages.InternalServerError.String())
+	}
+
+	return err
 }
 
 func (r Repository) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint64) (carritoDulce entities.CarritoDulce, exists bool, err error) {
@@ -53,7 +62,6 @@ func (r Repository) GetDulceByCarritoIDAndDulceID(carritoID uint64, dulceID uint
 	exists = true
 	return
 }
-
 
 func (r Repository) AddDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	err = r.DB.Save(&carritoDulce).Error

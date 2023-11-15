@@ -3,7 +3,7 @@ package categorias
 import (
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
-	errormessages "Mileyman-API/internal/domain/errors/error_messages"
+	"Mileyman-API/internal/domain/errors/errormessages"
 
 	"gorm.io/gorm"
 )

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	dbmocks "Mileyman-API/internal/app/config/database/mocks"
-	"Mileyman-API/internal/domain/dto/query"
+	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/entities"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -22,12 +22,14 @@ var (
 )
 
 const (
-	MockDulceID                      = uint64(132423)
+	mockDulceID                      = uint64(132423)
+	mockDulceID1                     = uint64(1231)
+	mockDulceID2                     = uint64(2321)
 	mockCarritoID                    = uint64(2321)
-	QuerySelectDulcesListByCarritoID = "SELECT * FROM `carritos_dulces` WHERE carrito_id = ?"
-	QuerySelectByCode                = "Call GetDetalleDulceByCode(?)"
-	QuerySelectByID                  = "Call GetDetalleDulceByID(?)"
-	QueryGetByID                     = "SELECT * FROM `dulces` WHERE id = ? LIMIT 1"
+	querySelectByCode                = "Call GetDetalleDulceByCode(?)"
+	querySelectByID                  = "Call GetDetalleDulceByID(?)"
+	querySelectDulcesListByCarritoID = "SELECT * FROM `carritos_dulces` WHERE carrito_id = ?"
+	queryGetByID                     = "SELECT * FROM `dulces` WHERE id = ? LIMIT 1"
 )
 
 func TestGetBycodeOK(t *testing.T) {
@@ -35,7 +37,7 @@ func TestGetBycodeOK(t *testing.T) {
 
 	dulce := getResponse()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(dulce.Codigo).WillReturnRows(
+	mockDB.ExpectQuery(querySelectByCode).WithArgs(dulce.Codigo).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "presentacion_nombre", "descripcion", "imagen", "disponibles", "precio_unidad", "peso", "marca_id", "marca_nombre", "codigo"}).AddRow(
 			dulce.ID, dulce.Nombre, dulce.Presentacion.ID, dulce.Presentacion.Nombre, dulce.Descripcion, dulce.Imagen, dulce.Disponibles, dulce.PrecioUnidad, dulce.Peso, dulce.Marca.ID, dulce.Marca.Nombre, dulce.Codigo,
 		),
@@ -46,9 +48,9 @@ func TestGetBycodeOK(t *testing.T) {
 	assert.Equal(t, dulce, dulceRecibido)
 }
 
-func TestByCodeErrorNotFound(t *testing.T) {
+func TestGetByCodeErrorNotFound(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2").WillReturnError(gorm.ErrRecordNotFound)
+	mockDB.ExpectQuery(querySelectByCode).WithArgs("2").WillReturnError(gorm.ErrRecordNotFound)
 
 	dulceRecibido, err := repository.GetByCode("2")
 
@@ -59,9 +61,9 @@ func TestByCodeErrorNotFound(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
-func TestByCodeInternalServerError(t *testing.T) {
+func TestGetByCodeInternalServerError(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2").WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectByCode).WithArgs("2").WillReturnError(gorm.ErrInvalidData)
 
 	dulceRecibido, err := repository.GetByCode("2")
 
@@ -77,7 +79,7 @@ func TestGetDetailByIDOK(t *testing.T) {
 
 	dulce := getResponse()
 
-	mockDB.ExpectQuery(QuerySelectByID).WithArgs(dulce.ID).WillReturnRows(
+	mockDB.ExpectQuery(querySelectByID).WithArgs(dulce.ID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "presentacion_nombre", "descripcion", "imagen", "disponibles", "precio_unidad", "peso", "marca_id", "marca_nombre", "codigo"}).AddRow(
 			dulce.ID, dulce.Nombre, dulce.Presentacion.ID, dulce.Presentacion.Nombre, dulce.Descripcion, dulce.Imagen, dulce.Disponibles, dulce.PrecioUnidad, dulce.Peso, dulce.Marca.ID, dulce.Marca.Nombre, dulce.Codigo,
 		),
@@ -88,24 +90,11 @@ func TestGetDetailByIDOK(t *testing.T) {
 	assert.Equal(t, dulce, dulceRecibido)
 }
 
-func TestGetDetailByIDErrorNotFound(t *testing.T) {
-	initialize()
-	mockDB.ExpectQuery(QuerySelectByID).WithArgs(MockDulceID).WillReturnError(gorm.ErrRecordNotFound)
-
-	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
-
-	typeErr := reflect.TypeOf(err).String()
-
-	assert.Error(t, err)
-	assert.Equal(t, "database.NotFoundError", typeErr)
-	assert.Empty(t, dulceRecibido)
-}
-
 func TestGetDetailByIDInternalServerError(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(MockDulceID).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectByCode).WithArgs(mockDulceID).WillReturnError(gorm.ErrInvalidData)
 
-	dulceRecibido, err := repository.GetDetailByID(MockDulceID)
+	dulceRecibido, err := repository.GetDetailByID(mockDulceID)
 
 	typeErr := reflect.TypeOf(err).String()
 
@@ -114,49 +103,16 @@ func TestGetDetailByIDInternalServerError(t *testing.T) {
 	assert.Empty(t, dulceRecibido)
 }
 
-func TestGetByIDOK(t *testing.T) {
+func TestGetDetailByIDErrorNotFound(t *testing.T) {
 	initialize()
+	mockDB.ExpectQuery(querySelectByID).WithArgs(mockDulceID).WillReturnError(gorm.ErrRecordNotFound)
 
-	dulce := getMockDulce()
-
-	mockDB.ExpectQuery(QueryGetByID).WithArgs(dulce.ID).WillReturnRows(
-		sqlmock.NewRows([]string{
-			"id", "nombre", "marca_id", "precio_unidad", "peso", "unidades", "presentacion_id", "descripcion",
-			"imagen", "fecha_vencimiento", "fecha_expedicion", "disponibles", "codigo",
-		}).AddRow(
-			dulce.ID, dulce.Nombre, dulce.MarcaID, dulce.PrecioUnidad, dulce.Peso, dulce.Unidades, dulce.PresentacionID, dulce.Descripcion,
-			dulce.Imagen, dulce.FechaVencimiento, dulce.FechaExpedicion, dulce.Disponibles, dulce.Codigo,
-		),
-	)
-	dulceRecibido, err := repository.GetByID(dulce.ID)
-
-	assert.NoError(t, err)
-	assert.Equal(t, dulce, dulceRecibido)
-}
-
-func TestGetByIDErrorNotFound(t *testing.T) {
-	initialize()
-	mockDB.ExpectQuery(QueryGetByID).WithArgs(2).WillReturnError(gorm.ErrRecordNotFound)
-
-	dulceRecibido, err := repository.GetByID(2)
+	dulceRecibido, err := repository.GetDetailByID(mockDulceID)
 
 	typeErr := reflect.TypeOf(err).String()
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.NotFoundError", typeErr)
-	assert.Empty(t, dulceRecibido)
-}
-
-func TestGetByIDInternalServerError(t *testing.T) {
-	initialize()
-	mockDB.ExpectQuery(QueryGetByID).WithArgs(2).WillReturnError(gorm.ErrInvalidData)
-
-	dulceRecibido, err := repository.GetByID(2)
-
-	typeErr := reflect.TypeOf(err).String()
-
-	assert.Error(t, err)
-	assert.Equal(t, "database.InternalServerError", typeErr)
 	assert.Empty(t, dulceRecibido)
 }
 
@@ -164,7 +120,7 @@ func TestGetDulcesListByCarritoIDWhenEveryThingWentSuccessfullyShouldReturnDulce
 	initialize()
 	dulcesList := getMockDulcesInCarritoList()
 
-	mockDB.ExpectQuery(QuerySelectDulcesListByCarritoID).WithArgs(mockCarritoID).WillReturnRows(
+	mockDB.ExpectQuery(querySelectDulcesListByCarritoID).WithArgs(mockCarritoID).WillReturnRows(
 		sqlmock.NewRows([]string{"id", "dulce_id", "carrito_id", "unidades", "subtotal"}).
 			AddRow(dulcesList[0].ID, dulcesList[0].DulceID, dulcesList[0].CarritoID, dulcesList[0].Unidades, dulcesList[0].Subtotal).
 			AddRow(dulcesList[1].ID, dulcesList[1].DulceID, dulcesList[1].CarritoID, dulcesList[1].Unidades, dulcesList[1].Subtotal),
@@ -179,7 +135,7 @@ func TestGetDulcesListByCarritoIDWhenEveryThingWentSuccessfullyShouldReturnDulce
 func TestGetDulcesListByCarritoIDWhenSomethingWentWrongShouldReturnInternalError(t *testing.T) {
 	initialize()
 
-	mockDB.ExpectQuery(QuerySelectDulcesListByCarritoID).WithArgs(mockCarritoID).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(querySelectDulcesListByCarritoID).WithArgs(mockCarritoID).WillReturnError(gorm.ErrInvalidData)
 
 	dulcesListResponse, err := repository.GetDulcesListByCarritoID(mockCarritoID)
 
@@ -207,6 +163,52 @@ func getMockDulcesInCarritoList() []entities.CarritoDulce {
 	}
 }
 
+func TestGetByIDOK(t *testing.T) {
+	initialize()
+
+	dulce := getMockDulce()
+
+	mockDB.ExpectQuery(queryGetByID).WithArgs(dulce.ID).WillReturnRows(
+		sqlmock.NewRows([]string{
+			"id", "nombre", "marca_id", "precio_unidad", "peso", "unidades", "presentacion_id", "descripcion",
+			"imagen", "fecha_vencimiento", "fecha_expedicion", "disponibles", "codigo",
+		}).AddRow(
+			dulce.ID, dulce.Nombre, dulce.MarcaID, dulce.PrecioUnidad, dulce.Peso, dulce.Unidades, dulce.PresentacionID, dulce.Descripcion,
+			dulce.Imagen, dulce.FechaVencimiento, dulce.FechaExpedicion, dulce.Disponibles, dulce.Codigo,
+		),
+	)
+	dulceRecibido, err := repository.GetByID(dulce.ID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, dulce, dulceRecibido)
+}
+
+func TestGetByIDErrorNotFound(t *testing.T) {
+	initialize()
+	mockDB.ExpectQuery(queryGetByID).WithArgs(2).WillReturnError(gorm.ErrRecordNotFound)
+
+	dulceRecibido, err := repository.GetByID(2)
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.NotFoundError", typeErr)
+	assert.Empty(t, dulceRecibido)
+}
+
+func TestGetByIDInternalServerError(t *testing.T) {
+	initialize()
+	mockDB.ExpectQuery(queryGetByID).WithArgs(2).WillReturnError(gorm.ErrInvalidData)
+
+	dulceRecibido, err := repository.GetByID(2)
+
+	typeErr := reflect.TypeOf(err).String()
+
+	assert.Error(t, err)
+	assert.Equal(t, "database.InternalServerError", typeErr)
+	assert.Empty(t, dulceRecibido)
+}
+
 func initialize() {
 	mockDB, DB = dbmocks.NewDB()
 	mockDB.MatchExpectationsInOrder(false)
@@ -215,9 +217,9 @@ func initialize() {
 	}
 }
 
-func getResponse() (response query.DetalleDulce) {
-	response = query.DetalleDulce{
-		ID:     MockDulceID,
+func getResponse() (response responses.DetalleDulce) {
+	response = responses.DetalleDulce{
+		ID:     mockDulceID,
 		Nombre: "Chocolatina",
 		Presentacion: entities.Presentacion{
 			ID:     1,

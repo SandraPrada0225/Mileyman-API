@@ -10,7 +10,7 @@ type MockCarritoProvider struct {
 	mock.Mock
 }
 
-func (mock *MockCarritoProvider) GetCarritoByCarritoID(carritoID uint64) (entities.Carrito, error) {
+func (mock *MockCarritoProvider) GetByID(carritoID uint64) (entities.Carrito, error) {
 	args := mock.Called(carritoID)
 	response := args.Get(0)
 	err := args.Error(1)
@@ -40,5 +40,15 @@ func (mock *MockCarritoProvider) AddDulceInCarrito(carritoDulce entities.Carrito
 func (mock *MockCarritoProvider) DeleteDulceInCarrito(carritoDulce entities.CarritoDulce) (err error) {
 	args := mock.Called(carritoDulce)
 	err = args.Error(0)
+	return err
+}
+
+func (mock *MockCarritoProvider) Save(carrito *entities.Carrito) error {
+	args := mock.Called(carrito)
+	createdID := args.Get(0).(uint64)
+	if createdID != 0 {
+		carrito.ID = createdID
+	}
+	err := args.Error(1)
 	return err
 }
