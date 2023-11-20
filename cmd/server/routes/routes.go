@@ -146,6 +146,7 @@ func (r router) MapRoutes() {
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
 	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
+	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
 	carritosGroup.PUT(":id", updateCarritoHandler.Handle())
 
 	usersGroup := r.rg.Group("/users")
