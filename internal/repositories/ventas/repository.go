@@ -3,6 +3,7 @@ package ventas
 import (
 	"errors"
 
+	"Mileyman-API/internal/domain/dto/responses"
 	"Mileyman-API/internal/domain/entities"
 	"Mileyman-API/internal/domain/errors/database"
 	"Mileyman-API/internal/domain/errors/errormessages"
@@ -36,4 +37,23 @@ func (r Repository) Create(venta *entities.Venta) error {
 	}
 
 	return nil
+}
+
+const GetListByUserIDSP = "Call GetPurchaseListByUserID(?)"
+
+func (r Repository) GetListByUserID(userID uint64) (responses.GetPurchaseList, error) {
+	var purchaseList responses.GetPurchaseList
+
+	err := r.DB.Raw(GetListByUserIDSP, userID).Find(&purchaseList.PurchaseList).Error
+	if err != nil {
+		params := errormessages.Parameters{
+			"resource": "ventas",
+			"user_id":  userID,
+			"error":    err.Error(),
+		}
+
+		return responses.GetPurchaseList{}, database.NewInternalServerError(errormessages.InternalServerError.GetMessageWithParams(params))
+	}
+
+	return purchaseList, nil
 }
