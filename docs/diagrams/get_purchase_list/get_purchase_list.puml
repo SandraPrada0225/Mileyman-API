@@ -1,0 +1,26 @@
+@startuml Get purchase list
+
+participant Caller
+participant Handler as handler
+participant UseCase
+participant VentasProvider as ventasp
+participant BDClient as BD
+
+Caller -> handler ++: GET api/users/{id}/compras
+    handler -> handler: id, err := strconv.ParseUint(id)
+    alt err != nil
+        handler -> Caller: 400 Bad Request
+    end
+    handler -> UseCase ++: Execute(id)
+        UseCase -> ventasp ++: GetListByUserID(id)
+        ventasp -> BD ++: GetPurchaseListByUserID(id)
+        BD -> ventasp --: <response>
+        ventasp -> UseCase --: <response, err>
+        alt err != nil
+            UseCase -> handler: nil, err
+            handler -> Caller: err
+        end
+
+    UseCase -> handler -- : response
+
+handler -> Caller --: <200 OK, response>     

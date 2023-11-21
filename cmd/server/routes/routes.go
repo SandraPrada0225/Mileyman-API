@@ -4,6 +4,7 @@ import (
 	getcarritobyidhandler "Mileyman-API/cmd/server/handlers/getcarritobyid"
 	getdulcebycodehandler "Mileyman-API/cmd/server/handlers/getdulcebycode"
 	getfiltroshandler "Mileyman-API/cmd/server/handlers/getfiltros"
+	getpurchaselisthandler "Mileyman-API/cmd/server/handlers/getpurchaselistbyuserid"
 	"Mileyman-API/cmd/server/handlers/ping"
 	purchasecarritohandler "Mileyman-API/cmd/server/handlers/purchasecarrito"
 	updatecarritohandler "Mileyman-API/cmd/server/handlers/updatecarrito"
@@ -17,6 +18,7 @@ import (
 	getcarritobyidusecase "Mileyman-API/internal/usecase/getcarritobyid"
 	getdulcebycodeusecase "Mileyman-API/internal/usecase/getdulcebycode"
 	getfiltrosusecase "Mileyman-API/internal/usecase/getfiltros"
+	getpurchaselistusecase "Mileyman-API/internal/usecase/getpurchaselistbyuserid"
 	purchasecarritousecase "Mileyman-API/internal/usecase/purchasecarrito"
 	updatecarritousecase "Mileyman-API/internal/usecase/updatecarrito"
 
@@ -105,6 +107,10 @@ func (r router) MapRoutes() {
 		VentasProvider:   ventasProvider,
 	}
 
+	getPurchaseListByUserIDUseCase := getpurchaselistusecase.Implementation{
+		VentasProvider: ventasProvider,
+	}
+
 	// Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulceByCode{
 		UseCase: getDulceByCodeUseCase,
@@ -126,6 +132,10 @@ func (r router) MapRoutes() {
 		UseCase: updatecarrito,
 	}
 
+	getPurchaseListByUserIDHandler := getpurchaselisthandler.GetPurchaseListByUserID{
+		UseCase: getPurchaseListByUserIDUseCase,
+	}
+
 	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
@@ -136,5 +146,9 @@ func (r router) MapRoutes() {
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET(":id", getCarritoByIDHandler.Handle())
 	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
-	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
+	carritosGroup.PUT(":id/comprar", purchaseCarritoHandler.Handle())
+	carritosGroup.PUT(":id", updateCarritoHandler.Handle())
+
+	usersGroup := r.rg.Group("/users")
+	usersGroup.GET(":id/compras", getPurchaseListByUserIDHandler.Handle())
 }
